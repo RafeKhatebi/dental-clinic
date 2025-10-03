@@ -134,8 +134,13 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <!-- Top Navigation -->
             <header class="bg-white shadow-sm">
                 <div class="flex items-center justify-between px-6 py-4">
-                    <div class="flex items-center">
-                        <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-800">
+                    <div class="flex items-center gap-3">
+                        <button id="mobile-menu-toggle" class="md:hidden text-gray-600 hover:text-gray-800">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        <button id="show-sidebar" class="hidden text-gray-600 hover:text-gray-800" title="نمایش منو">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
