@@ -27,19 +27,10 @@ foreach ($settings as $setting) {
             <h2 class="text-xl font-semibold text-gray-800 border-b pb-3"><?php echo $lang['general_settings']; ?></h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Clinic Name (Persian) -->
+                <!-- Clinic Name -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <?php echo $lang['clinic_name']; ?> (فارسی)
-                    </label>
-                    <input type="text" name="clinic_name_fa" value="<?php echo htmlspecialchars($settingsArray['clinic_name_fa'] ?? ''); ?>"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
-                </div>
-
-                <!-- Clinic Name (English) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <?php echo $lang['clinic_name']; ?> (English)
+                        <?php echo $lang['clinic_name']; ?>
                     </label>
                     <input type="text" name="clinic_name" value="<?php echo htmlspecialchars($settingsArray['clinic_name'] ?? ''); ?>"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">

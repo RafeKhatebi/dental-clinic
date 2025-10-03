@@ -15,7 +15,6 @@ try {
     // List of settings to update
     $settingsToUpdate = [
         'clinic_name',
-        'clinic_name_fa',
         'clinic_address',
         'clinic_phone',
         'clinic_email',

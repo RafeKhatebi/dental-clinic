@@ -19,18 +19,51 @@ try {
     }
 
     // Generate backup filename
-    $backupName = 'backup_' . date('Y-m-d_H-i-s') . '.db';
+    $backupName = 'backup_' . date('Y-m-d_H-i-s') . '.sql';
     $backupPath = $backupDir . '/' . $backupName;
 
-    // Copy database file
-    $dbPath = DB_PATH;
-
-    if (!file_exists($dbPath)) {
-        errorResponse('Database file not found');
+    // Get database connection
+    $db = getDBConnection();
+    
+    // Get all tables
+    $tables = [];
+    $result = $db->query('SHOW TABLES');
+    while ($row = $result->fetch(PDO::FETCH_NUM)) {
+        $tables[] = $row[0];
     }
 
-    if (!copy($dbPath, $backupPath)) {
-        errorResponse('Failed to create backup');
+    // Start backup content
+    $backup = "-- MySQL Backup\n";
+    $backup .= "-- Date: " . date('Y-m-d H:i:s') . "\n\n";
+    $backup .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+
+    // Loop through tables
+    foreach ($tables as $table) {
+        // Drop table
+        $backup .= "DROP TABLE IF EXISTS `$table`;\n";
+        
+        // Create table
+        $createTable = $db->query("SHOW CREATE TABLE `$table`")->fetch();
+        $backup .= $createTable['Create Table'] . ";\n\n";
+        
+        // Insert data
+        $rows = $db->query("SELECT * FROM `$table`")->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows) {
+            foreach ($rows as $row) {
+                $values = array_map(function($v) use ($db) {
+                    return $v === null ? 'NULL' : $db->quote($v);
+                }, array_values($row));
+                $backup .= "INSERT INTO `$table` VALUES (" . implode(',', $values) . ");\n";
+            }
+            $backup .= "\n";
+        }
+    }
+
+    $backup .= "SET FOREIGN_KEY_CHECKS=1;\n";
+
+    // Save to file
+    if (!file_put_contents($backupPath, $backup)) {
+        errorResponse('Failed to write backup file');
     }
 
     // Get file size

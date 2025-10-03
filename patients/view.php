@@ -164,6 +164,7 @@ include '../includes/header.php';
                                 <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['dentist']; ?></th>
                                 <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['tooth_number']; ?></th>
                                 <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['final_price']; ?></th>
+                                <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase">عملیات</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -174,6 +175,11 @@ include '../includes/header.php';
                                 <td class="px-4 py-3 text-sm text-gray-900"><?php echo htmlspecialchars($service['dentist_name']); ?></td>
                                 <td class="px-4 py-3 text-sm text-gray-900"><?php echo $service['tooth_number'] ?: '-'; ?></td>
                                 <td class="px-4 py-3 text-sm font-semibold text-green-600"><?php echo formatCurrency($service['final_price']); ?></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <a href="../reports/invoices/service_invoice.php?id=<?php echo $service['id']; ?>" target="_blank" class="text-blue-600 hover:text-blue-800">
+                                        🖨️ فاکتور
+                                    </a>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -201,6 +207,7 @@ include '../includes/header.php';
                                 <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['payment_method']; ?></th>
                                 <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['amount']; ?></th>
                                 <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['notes']; ?></th>
+                                <th class="px-4 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase">عملیات</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -217,6 +224,11 @@ include '../includes/header.php';
                                 </td>
                                 <td class="px-4 py-3 text-sm font-semibold text-green-600"><?php echo formatCurrency($payment['amount']); ?></td>
                                 <td class="px-4 py-3 text-sm text-gray-600"><?php echo htmlspecialchars($payment['notes'] ?: '-'); ?></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <a href="../reports/invoices/payment_receipt.php?id=<?php echo $payment['id']; ?>" target="_blank" class="text-blue-600 hover:text-blue-800">
+                                        🖨️ رسید
+                                    </a>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
