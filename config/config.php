@@ -41,11 +41,21 @@ function loadLanguage($lang = null) {
     $lang = $lang ?? $current_lang;
     
     $langFile = BASE_PATH . "/lang/$lang.php";
+    $translations = [];
+    
     if (file_exists($langFile)) {
-        return require $langFile;
+        $translations = require $langFile;
+    } else {
+        $translations = require BASE_PATH . "/lang/fa.php";
     }
     
-    return require BASE_PATH . "/lang/fa.php";
+    // Merge staff translations
+    $staffFile = BASE_PATH . "/lang/{$lang}_staff.php";
+    if (file_exists($staffFile)) {
+        $translations = array_merge($translations, require $staffFile);
+    }
+    
+    return $translations;
 }
 
 /**

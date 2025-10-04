@@ -64,12 +64,18 @@ $users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name LIMIT 
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <?php if ($user['id'] != $_SESSION['user_id']): ?>
-                                <a href="edit.php?id=<?php echo $user['id']; ?>" 
-                                   class="text-green-600 hover:text-green-900">
-                                    <?php echo $lang['edit']; ?>
-                                </a>
-                                <?php endif; ?>
+                                <div class="flex gap-2">
+                                    <?php if ($user['id'] != $_SESSION['user_id']): ?>
+                                    <a href="edit.php?id=<?php echo $user['id']; ?>" 
+                                       class="text-green-600 hover:text-green-900">
+                                        <?php echo $lang['edit']; ?>
+                                    </a>
+                                    <button onclick="deleteUser(<?php echo $user['id']; ?>)" 
+                                            class="text-red-600 hover:text-red-900">
+                                        <?php echo $lang['delete']; ?>
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -80,5 +86,29 @@ $users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name LIMIT 
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+function deleteUser(id) {
+    if (!confirm('<?php echo $lang['delete_confirm']; ?>')) {
+        return;
+    }
+    
+    fetch(`<?php echo BASE_URL; ?>/api/users/delete.php?id=${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('<?php echo $lang['delete_success']; ?>');
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('<?php echo $lang['error_occurred']; ?>');
+    });
+}
+</script>
 
 <?php include '../includes/footer.php'; ?>

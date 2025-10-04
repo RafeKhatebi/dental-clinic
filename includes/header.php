@@ -36,7 +36,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-gray-900 text-white flex-shrink-0 hidden md:block flex flex-col transition-all duration-300">
+        <aside id="sidebar" class="w-64 bg-gray-900 text-white flex-shrink-0 hidden md:flex flex-col transition-all duration-300">
             <div class="p-6 flex-shrink-0 flex items-center justify-between">
                 <h1 id="sidebar-title" class="text-xl font-bold"><?php echo getSetting('clinic_name', $lang['app_name']); ?></h1>
                 <button id="sidebar-toggle" class="text-white hover:text-gray-300 hidden md:block" title="بستن منو">
@@ -46,7 +46,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 </button>
             </div>
             
-            <nav class="mt-6 flex-1 overflow-y-auto">
+            <nav class="flex-1 overflow-y-auto pb-6" style="scrollbar-width: thin; scrollbar-color: #4B5563 #1F2937;">
                 <a href="<?php echo BASE_URL; ?>/dashboard.php" 
                    class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo $current_page === 'dashboard' ? 'active' : ''; ?>">
                     <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,13 +87,34 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <?php echo $lang['menu_suppliers']; ?>
                 </a>
                 
-                <a href="<?php echo BASE_URL; ?>/partners/index.php" 
-                   class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/partners/') !== false ? 'active' : ''; ?>">
-                    <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <?php echo $lang['menu_partners']; ?>
-                </a>
+                <!-- Financial Management -->
+                <div class="mt-2">
+                    <button onclick="toggleSubmenu('financial')" class="sidebar-link flex items-center justify-between w-full px-6 py-3 hover:bg-gray-800 transition">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span><?php echo $current_lang === 'fa' ? 'مدیریت مالی' : 'Financial'; ?></span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform" id="financial-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="financial-submenu" class="hidden bg-gray-800">
+                        <a href="<?php echo BASE_URL; ?>/partners/index.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo strpos($_SERVER['PHP_SELF'], '/partners/') !== false ? 'active' : ''; ?>">
+                            <?php echo $lang['menu_partners']; ?>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/staff/index.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo strpos($_SERVER['PHP_SELF'], '/staff/') !== false ? 'active' : ''; ?>">
+                            <?php echo $lang['menu_staff']; ?>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/salaries/index.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo strpos($_SERVER['PHP_SELF'], '/salaries/') !== false ? 'active' : ''; ?>">
+                            <?php echo $lang['menu_salaries']; ?>
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/expenses/index.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo strpos($_SERVER['PHP_SELF'], '/expenses/') !== false ? 'active' : ''; ?>">
+                            <?php echo $lang['menu_expenses']; ?>
+                        </a>
+                    </div>
+                </div>
                 
                 <a href="<?php echo BASE_URL; ?>/reports/index.php" 
                    class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/reports/') !== false ? 'active' : ''; ?>">

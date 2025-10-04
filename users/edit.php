@@ -49,7 +49,7 @@ include '../includes/header.php';
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <?php echo $lang['password']; ?> (<?php echo $lang['leave_empty_to_keep']; ?>)
+                        <?php echo $lang['password']; ?> (<?php echo $current_lang === 'fa' ? 'خالی بگذارید تا تغییر نکند' : 'Leave empty to keep current'; ?>)
                     </label>
                     <input type="password" name="password"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">

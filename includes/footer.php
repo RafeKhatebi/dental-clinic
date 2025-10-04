@@ -75,6 +75,19 @@
                 window.location.href = url.toString();
             });
         });
+
+        // Submenu toggle
+        window.toggleSubmenu = function(id) {
+            const submenu = document.getElementById(id + '-submenu');
+            const icon = document.getElementById(id + '-icon');
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                submenu.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
     </script>
 </body>
 </html>
