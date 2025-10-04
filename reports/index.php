@@ -194,6 +194,44 @@ $expiringSoon = fetchAll("SELECT * FROM medicines WHERE is_active = 1 AND expiry
                 </form>
             </div>
 
+            <!-- معاشات -->
+            <div class="border rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">💵</span>
+                    <h3 class="font-bold">معاشات</h3>
+                </div>
+                <form action="financial/salaries_report.php" method="GET" target="_blank" class="space-y-2">
+                    <input type="month" name="month" value="<?php echo date('Y-m'); ?>" class="w-full px-3 py-2 border rounded text-sm">
+                    <button type="submit" class="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm">مشاهده PDF</button>
+                </form>
+            </div>
+
+            <!-- مصارف -->
+            <div class="border rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">💸</span>
+                    <h3 class="font-bold">مصارف</h3>
+                </div>
+                <form action="financial/expenses_report.php" method="GET" target="_blank" class="space-y-2">
+                    <input type="date" name="start_date" value="<?php echo date('Y-m-01'); ?>" class="w-full px-3 py-2 border rounded text-sm">
+                    <input type="date" name="end_date" value="<?php echo date('Y-m-d'); ?>" class="w-full px-3 py-2 border rounded text-sm">
+                    <button type="submit" class="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm">مشاهده PDF</button>
+                </form>
+            </div>
+
+            <!-- سود/زیان -->
+            <div class="border rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">📊</span>
+                    <h3 class="font-bold">سود/زیان</h3>
+                </div>
+                <form action="financial/profit_loss.php" method="GET" target="_blank" class="space-y-2">
+                    <input type="date" name="start_date" value="<?php echo date('Y-m-01'); ?>" class="w-full px-3 py-2 border rounded text-sm">
+                    <input type="date" name="end_date" value="<?php echo date('Y-m-d'); ?>" class="w-full px-3 py-2 border rounded text-sm">
+                    <button type="submit" class="w-full bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm">مشاهده PDF</button>
+                </form>
+            </div>
+
             <!-- موجودی دارو -->
             <div class="border rounded-lg p-4">
                 <div class="flex items-center gap-2 mb-3">
