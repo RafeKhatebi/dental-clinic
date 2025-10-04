@@ -1,6 +1,5 @@
 <?php
 require_once '../../config/config.php';
-require_once '../../lib/pdf_helper.php';
 
 $date = $_GET['date'] ?? date('Y-m-d');
 
@@ -16,26 +15,72 @@ $services = fetchAll("
 ", [$date]);
 
 $totalIncome = $cashIncome + $installmentIncome;
-
-$pdf = new SimplePDF();
-$pdf->addHeader('گزارش روزانه صندوق');
-$pdf->addText('<strong>تاریخ:</strong> ' . $date);
-$pdf->addText('<hr>');
-$pdf->addText('<h4>خلاصه مالی</h4>');
-$pdf->addText('دریافتی نقدی: ' . number_format($cashIncome) . ' ریال<br>');
-$pdf->addText('دریافتی اقساط: ' . number_format($installmentIncome) . ' ریال<br>');
-$pdf->addText('<strong>جمع کل: ' . number_format($totalIncome) . ' ریال</strong>');
-$pdf->addText('<hr>');
-$pdf->addText('<h4>آمار</h4>');
-$pdf->addText('تعداد بیماران: ' . $patientsCount . '<br>تعداد خدمات: ' . count($services));
-
-if ($services) {
-    $pdf->addText('<hr><h4>خدمات ارائه شده</h4>');
-    $tableData = [];
-    foreach ($services as $s) {
-        $tableData[] = [$s['service_name'], $s['count'], number_format($s['total'])];
-    }
-    $pdf->addTable(['خدمت', 'تعداد', 'مبلغ'], $tableData);
-}
-
-$pdf->output();
+?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش روزانه</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="no-print flex gap-4 mb-4">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                چاپ
+            </button>
+            <a href="../index.php" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                بازگشت
+            </a>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold text-center mb-6">گزارش روزانه صندوق</h1>
+            <p class="text-center mb-6"><strong>تاریخ:</strong> <?php echo $date; ?></p>
+            
+            <div class="border-b pb-4 mb-4">
+                <h2 class="text-xl font-bold mb-3">خلاصه مالی</h2>
+                <p>دریافتی نقدی: <?php echo number_format($cashIncome); ?> افغانی</p>
+                <p>دریافتی اقساط: <?php echo number_format($installmentIncome); ?> افغانی</p>
+                <p class="text-xl font-bold mt-2">جمع کل: <?php echo number_format($totalIncome); ?> افغانی</p>
+            </div>
+            
+            <div class="border-b pb-4 mb-4">
+                <h2 class="text-xl font-bold mb-3">آمار</h2>
+                <p>تعداد بیماران: <?php echo $patientsCount; ?></p>
+                <p>تعداد خدمات: <?php echo count($services); ?></p>
+            </div>
+            
+            <?php if ($services): ?>
+            <div>
+                <h2 class="text-xl font-bold mb-3">خدمات ارائه شده</h2>
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2 text-right">خدمت</th>
+                            <th class="p-2 text-right">تعداد</th>
+                            <th class="p-2 text-right">مبلغ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($services as $s): ?>
+                        <tr class="border-b">
+                            <td class="p-2"><?php echo $s['service_name']; ?></td>
+                            <td class="p-2"><?php echo $s['count']; ?></td>
+                            <td class="p-2"><?php echo number_format($s['total']); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</body>
+</html>

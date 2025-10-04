@@ -1,6 +1,5 @@
 <?php
 require_once '../../config/config.php';
-require_once '../../lib/pdf_helper.php';
 
 $serviceId = intval($_GET['id'] ?? 0);
 if (!$serviceId) die('Invalid service ID');
@@ -15,28 +14,75 @@ $service = fetchOne("
 
 if (!$service) die('Service not found');
 
-$invoiceNumber = generateInvoiceNumber('SRV');
+$invoiceNumber = 'SRV-' . str_pad($serviceId, 6, '0', STR_PAD_LEFT);
 $subtotal = $service['total_price'];
 $discount = $service['discount'];
-$tax = ($subtotal - $discount) * 0.09;
-$total = $subtotal - $discount + $tax;
-
-$pdf = new SimplePDF();
-$pdf->addHeader('فاکتور خدمات دندانپزشکی');
-$pdf->addText('<strong>شماره فاکتور:</strong> ' . $invoiceNumber . ' | <strong>تاریخ:</strong> ' . date('Y/m/d'));
-$pdf->addText('<hr>');
-$pdf->addText('<strong>بیمار:</strong> ' . $service['first_name'] . ' ' . $service['last_name'] . ' | کد: ' . $service['patient_code']);
-$pdf->addText('<hr>');
-
-$pdf->addTable(
-    ['ردیف', 'خدمت', 'تعداد', 'قیمت واحد', 'جمع'],
-    [['1', $service['service_name'], $service['quantity'], number_format($service['unit_price']), number_format($service['total_price'])]]
-);
-
-$pdf->addText('<div style="text-align:left;">جمع: ' . number_format($subtotal) . ' ریال<br>');
-$pdf->addText('تخفیف: ' . number_format($discount) . ' ریال<br>');
-$pdf->addText('مالیات (9%): ' . number_format($tax) . ' ریال<br>');
-$pdf->addText('<strong>جمع کل: ' . number_format($total) . ' ریال</strong><br>');
-$pdf->addText('به حروف: ' . numberToWords($total) . ' ریال</div>');
-
-$pdf->output();
+$total = $subtotal - $discount;
+?>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فاکتور خدمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="no-print flex gap-4 mb-4">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                چاپ
+            </button>
+            <a href="../../patients/view.php?id=<?php echo $service['patient_id']; ?>" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg">
+                بازگشت
+            </a>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold text-center mb-6">فاکتور خدمات دندانپزشکی</h1>
+            <div class="border-b pb-4 mb-4">
+                <p><strong>شماره فاکتور:</strong> <?php echo $invoiceNumber; ?></p>
+                <p><strong>تاریخ:</strong> <?php echo $service['service_date']; ?></p>
+            </div>
+            <div class="border-b pb-4 mb-4">
+                <p><strong>بیمار:</strong> <?php echo $service['first_name'] . ' ' . $service['last_name']; ?></p>
+                <p><strong>کد بیمار:</strong> <?php echo $service['patient_code']; ?></p>
+                <p><strong>دندانپزشک:</strong> <?php echo $service['dentist_name']; ?></p>
+            </div>
+            <table class="w-full mb-4">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-2 text-right">ردیف</th>
+                        <th class="p-2 text-right">خدمت</th>
+                        <th class="p-2 text-right">تعداد</th>
+                        <th class="p-2 text-right">قیمت واحد</th>
+                        <th class="p-2 text-right">جمع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b">
+                        <td class="p-2">1</td>
+                        <td class="p-2"><?php echo $service['service_name']; ?></td>
+                        <td class="p-2"><?php echo $service['quantity']; ?></td>
+                        <td class="p-2"><?php echo number_format($service['unit_price']); ?></td>
+                        <td class="p-2"><?php echo number_format($service['total_price']); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-left space-y-2">
+                <p>جمع: <?php echo number_format($subtotal); ?> افغانی</p>
+                <p>تخفیف: <?php echo number_format($discount); ?> افغانی</p>
+                <p class="text-xl font-bold">جمع کل: <?php echo number_format($total); ?> افغانی</p>
+            </div>
+            <div class="mt-8 text-center">
+                <p>امضا و مهر</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

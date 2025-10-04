@@ -49,7 +49,7 @@ include '../includes/header.php';
                     </label>
                     <select name="role" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
-                        <option value="">-- <?php echo $lang['select']; ?> --</option>
+                        <option value="">-- انتخاب کنید --</option>
                         <option value="admin"><?php echo $lang['admin']; ?></option>
                         <option value="dentist"><?php echo $lang['dentist']; ?></option>
                         <option value="secretary"><?php echo $lang['secretary']; ?></option>

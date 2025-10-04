@@ -45,7 +45,7 @@ $services = fetchAll("SELECT * FROM services ORDER BY category, service_name");
                                 <?php endif; ?>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-900">
-                                <?php echo $service['category'] ? $lang[$service['category']] : '-'; ?>
+                                <?php echo ($service['category'] && isset($lang[$service['category']])) ? $lang[$service['category']] : ($service['category'] ?: '-'); ?>
                             </td>
                             <td class="px-6 py-4 text-sm font-semibold text-green-600">
                                 <?php echo formatCurrency($service['base_price']); ?>
