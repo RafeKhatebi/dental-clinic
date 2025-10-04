@@ -226,7 +226,13 @@ return [
     'patient_growth' => 'Patient Growth',
     'service_categories' => 'Service Categories',
     'current_month' => 'Current Month',
+    'financial_summary' => 'Financial Summary',
+    'doctor_performance' => 'Doctor Performance',
+    'medicine_inventory' => 'Medicine Inventory',
+    'trend_charts' => 'Trend Charts',
+    'other_reports' => 'Other Reports',
     'all' => 'All',
+    'trend_charts' => 'Trend Charts',
     
     // Prescriptions
     'prescriptions' => 'Prescriptions',
