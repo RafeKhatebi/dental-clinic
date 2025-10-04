@@ -36,9 +36,14 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 bg-gray-900 text-white flex-shrink-0 hidden md:block flex flex-col">
-            <div class="p-6 flex-shrink-0">
-                <h1 class="text-xl font-bold"><?php echo getSetting('clinic_name', $lang['app_name']); ?></h1>
+        <aside id="sidebar" class="w-64 bg-gray-900 text-white flex-shrink-0 hidden md:block flex flex-col transition-all duration-300">
+            <div class="p-6 flex-shrink-0 flex items-center justify-between">
+                <h1 id="sidebar-title" class="text-xl font-bold"><?php echo getSetting('clinic_name', $lang['app_name']); ?></h1>
+                <button id="sidebar-toggle" class="text-white hover:text-gray-300 hidden md:block" title="بستن منو">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                    </svg>
+                </button>
             </div>
             
             <nav class="mt-6 flex-1 overflow-y-auto">
@@ -142,7 +147,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         </button>
                         <button id="show-sidebar" class="hidden text-gray-600 hover:text-gray-800" title="نمایش منو">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
                             </svg>
                         </button>
                     </div>
