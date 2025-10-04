@@ -54,9 +54,9 @@ if (!empty($doctorId)) {
 
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800">گزارش عملکرد دکتر</h1>
+        <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['doctor_performance']; ?></h1>
         <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-            🖨 چاپ
+            🖨 <?php echo $lang['print']; ?>
         </button>
     </div>
 
@@ -64,19 +64,19 @@ if (!empty($doctorId)) {
     <div class="bg-white rounded-lg shadow-sm p-4">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">از تاریخ</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo $lang['from_date']; ?></label>
                 <input type="date" name="date_from" value="<?php echo $dateFrom; ?>" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">تا تاریخ</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo $lang['to_date']; ?></label>
                 <input type="date" name="date_to" value="<?php echo $dateTo; ?>" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">دکتر</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo $lang['dentist']; ?></label>
                 <select name="doctor_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="">همه دکترها</option>
+                    <option value=""><?php echo $current_lang === 'fa' ? 'همه دکترها' : 'All Doctors'; ?></option>
                     <?php foreach ($dentists as $dentist): ?>
                     <option value="<?php echo $dentist['id']; ?>" <?php echo $doctorId == $dentist['id'] ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($dentist['full_name']); ?>
@@ -86,7 +86,7 @@ if (!empty($doctorId)) {
             </div>
             <div class="flex items-end">
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                    نمایش گزارش
+                    <?php echo $lang['generate_report']; ?>
                 </button>
             </div>
         </form>
@@ -95,24 +95,24 @@ if (!empty($doctorId)) {
     <!-- Performance Summary -->
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b">
-            <h2 class="text-xl font-bold">خلاصه عملکرد</h2>
-            <p class="text-sm text-gray-600">از <?php echo formatDate($dateFrom); ?> تا <?php echo formatDate($dateTo); ?></p>
+            <h2 class="text-xl font-bold"><?php echo $lang['doctor_performance']; ?></h2>
+            <p class="text-sm text-gray-600"><?php echo $lang['from_date']; ?>: <?php echo formatDate($dateFrom); ?> - <?php echo $lang['to_date']; ?>: <?php echo formatDate($dateTo); ?></p>
         </div>
         
         <?php if (empty($performance)): ?>
             <div class="p-8 text-center text-gray-500">
-                داده‌ای یافت نشد
+                <?php echo $lang['no_data']; ?>
             </div>
         <?php else: ?>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">دکتر</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تعداد خدمات</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تعداد بیماران</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">درآمد کل</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">میانگین قیمت</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['dentist']; ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['total_services']; ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['total_patients']; ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['total_revenue']; ?></th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['avg_service_price']; ?></th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -140,15 +140,15 @@ if (!empty($doctorId)) {
     <?php if (!empty($serviceBreakdown)): ?>
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b">
-            <h2 class="text-xl font-bold">تفکیک خدمات</h2>
+            <h2 class="text-xl font-bold"><?php echo $lang['service_breakdown']; ?></h2>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">خدمت</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تعداد</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">درآمد</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['service_name']; ?></th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['count']; ?></th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase"><?php echo $lang['revenue']; ?></th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -167,8 +167,8 @@ if (!empty($doctorId)) {
 </div>
 
 <script>
-addBreadcrumb('گزارشات');
-addBreadcrumb('عملکرد دکتر');
+addBreadcrumb('<?php echo $lang['reports']; ?>');
+addBreadcrumb('<?php echo $lang['doctor_performance']; ?>');
 </script>
 
 <?php include '../includes/footer.php'; ?>
