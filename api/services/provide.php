@@ -29,10 +29,20 @@ try {
     $totalPrice = $quantity * $unitPrice;
     $finalPrice = $totalPrice - $discount;
     
-    // Prepare data
+    // Get service template info
+    $service = fetchOne("SELECT service_name, service_name_en, category, base_price FROM services WHERE id = ? AND status = 'template'", [$serviceId]);
+    
+    if (!$service) {
+        errorResponse('Service not found');
+    }
+    
+    // Prepare data for patient service record
     $data = [
         'patient_id' => $patientId,
-        'service_id' => $serviceId,
+        'service_name' => $service['service_name'],
+        'service_name_en' => $service['service_name_en'],
+        'category' => $service['category'],
+        'base_price' => $service['base_price'],
         'dentist_id' => $dentistId,
         'service_date' => $serviceDate,
         'tooth_number' => sanitizeInput($_POST['tooth_number'] ?? ''),
@@ -46,18 +56,7 @@ try {
         'created_by' => $_SESSION['user_id']
     ];
     
-    // Get service template info
-    $service = fetchOne("SELECT service_name, service_name_en, category FROM services WHERE id = ? AND status = 'template'", [$serviceId]);
-    
-    // Add service info to data
-    $data['service_name'] = $service['service_name'] ?? '';
-    $data['service_name_en'] = $service['service_name_en'] ?? '';
-    $data['category'] = $service['category'] ?? '';
-    $data['base_price'] = $unitPrice;
-    $data['status'] = 'completed';
-    unset($data['service_id']);
-    
-    // Insert service
+    // Insert service record
     $serviceRecordId = insertRecord('services', $data);
     
     // Log activity

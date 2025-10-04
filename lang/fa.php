@@ -236,7 +236,7 @@ return [
     'clinic_address' => 'آدرس مرکز',
     'clinic_phone' => 'تلفن مرکز',
     'clinic_email' => 'ایمیل مرکز',
-    'currency' => 'واحد پول',
+    'currency' => 'افغانی',
     'language' => 'زبان',
     'timezone' => 'منطقه زمانی',
     'date_format' => 'فرمت تاریخ',

@@ -15,13 +15,12 @@ if (!$patient) {
 
 // Get unpaid services
 $unpaidServices = fetchAll("
-    SELECT ps.*, s.service_name,
-           COALESCE((SELECT SUM(amount) FROM payments WHERE patient_service_id = ps.id), 0) as paid
-    FROM patient_services ps
-    JOIN services s ON ps.service_id = s.id
-    WHERE ps.patient_id = ?
-    HAVING ps.final_price > paid
-    ORDER BY ps.service_date DESC
+    SELECT s.id, s.service_name, s.service_date, s.final_price,
+           COALESCE((SELECT SUM(amount) FROM payments WHERE service_id = s.id AND payment_type = 'service'), 0) as paid
+    FROM services s
+    WHERE s.patient_id = ? AND s.status = 'completed'
+    HAVING s.final_price > paid
+    ORDER BY s.service_date DESC
 ", [$patientId]);
 
 include '../includes/header.php';

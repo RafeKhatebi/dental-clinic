@@ -231,7 +231,7 @@ INSERT IGNORE INTO system (record_type, setting_key, setting_value, setting_type
 ('setting', 'clinic_address', '', 'text', 'آدرس مرکز'),
 ('setting', 'clinic_phone', '', 'text', 'تلفن مرکز'),
 ('setting', 'clinic_email', '', 'email', 'ایمیل مرکز'),
-('setting', 'currency', 'ریال', 'text', 'واحد پول'),
+('setting', 'currency', 'افغانی', 'text', 'واحد پول'),
 ('setting', 'language', 'fa', 'text', 'زبان پیشفرض'),
 ('setting', 'low_stock_alert', '10', 'number', 'حد هشدار موجودی کم'),
 ('setting', 'expiry_alert_days', '30', 'number', 'روزهای هشدار انقضا');
