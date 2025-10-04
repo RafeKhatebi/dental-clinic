@@ -2,7 +2,13 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-// Get all suppliers from medicines table (optimized schema)
+// Get all suppliers with pagination
+$totalRecords = fetchOne("
+    SELECT COUNT(DISTINCT supplier_name) as count
+    FROM medicines 
+    WHERE supplier_name IS NOT NULL AND supplier_name != ''
+")['count'];
+$pagination = getPagination($totalRecords, 20);
 $suppliers = fetchAll("
     SELECT DISTINCT 
         supplier_name, 
@@ -14,6 +20,7 @@ $suppliers = fetchAll("
     WHERE supplier_name IS NOT NULL AND supplier_name != ''
     GROUP BY supplier_name, supplier_phone, supplier_email, supplier_address
     ORDER BY supplier_name
+    LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}
 ");
 ?>
 
@@ -80,6 +87,7 @@ $suppliers = fetchAll("
                     </tbody>
                 </table>
             </div>
+            <?php echo renderPagination($pagination); ?>
         <?php endif; ?>
     </div>
 </div>

@@ -2,7 +2,7 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-// Get all medicines
+// Get all medicines with pagination
 $search = $_GET['search'] ?? '';
 $whereClause = '';
 $params = [];
@@ -13,7 +13,9 @@ if (!empty($search)) {
     $params = [$searchParam, $searchParam, $searchParam];
 }
 
-$medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_name", $params);
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM medicines $whereClause", $params)['count'];
+$pagination = getPagination($totalRecords, 20);
+$medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}", $params);
 ?>
 
 <div class="space-y-6">
@@ -126,6 +128,7 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
                     </tbody>
                 </table>
             </div>
+            <?php echo renderPagination($pagination); ?>
         <?php endif; ?>
     </div>
 </div>

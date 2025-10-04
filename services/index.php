@@ -2,8 +2,10 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-// Get all services
-$services = fetchAll("SELECT * FROM services ORDER BY category, service_name");
+// Get all services with pagination
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM services")['count'];
+$pagination = getPagination($totalRecords, 20);
+$services = fetchAll("SELECT * FROM services ORDER BY category, service_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}");
 ?>
 
 <div class="space-y-6">
@@ -70,6 +72,7 @@ $services = fetchAll("SELECT * FROM services ORDER BY category, service_name");
                     </tbody>
                 </table>
             </div>
+            <?php echo renderPagination($pagination); ?>
         <?php endif; ?>
     </div>
 </div>

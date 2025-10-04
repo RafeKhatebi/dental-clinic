@@ -7,8 +7,10 @@ if (!hasRole('admin')) {
 
 include '../includes/header.php';
 
-// Get all backups
-$backups = fetchAll("SELECT d.*, u.full_name as created_by_name FROM documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.document_type = 'backup' ORDER BY d.created_at DESC");
+// Get all backups with pagination
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM documents WHERE document_type = 'backup'")['count'];
+$pagination = getPagination($totalRecords, 20);
+$backups = fetchAll("SELECT d.*, u.full_name as created_by_name FROM documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.document_type = 'backup' ORDER BY d.created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}");
 ?>
 
 <div class="space-y-6">
@@ -74,6 +76,7 @@ $backups = fetchAll("SELECT d.*, u.full_name as created_by_name FROM documents d
                     </tbody>
                 </table>
             </div>
+            <?php echo renderPagination($pagination); ?>
         <?php endif; ?>
     </div>
 </div>

@@ -2,7 +2,13 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-// Get all medicine sales
+// Get all medicine sales with pagination
+$totalRecords = fetchOne("
+    SELECT COUNT(DISTINCT m.id) as count
+    FROM medicines m
+    WHERE m.sale_date IS NOT NULL
+")['count'];
+$pagination = getPagination($totalRecords, 20);
 $sales = fetchAll("
     SELECT m.id, m.sale_code, m.sale_date, m.sale_total_price as final_amount, 
            pay.payment_method,
@@ -13,6 +19,7 @@ $sales = fetchAll("
     WHERE m.sale_date IS NOT NULL
     GROUP BY m.id
     ORDER BY m.sale_date DESC, m.created_at DESC
+    LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}
 ");
 ?>
 
@@ -78,6 +85,7 @@ $sales = fetchAll("
                     </tbody>
                 </table>
             </div>
+            <?php echo renderPagination($pagination); ?>
         <?php endif; ?>
     </div>
 </div>

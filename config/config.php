@@ -223,6 +223,81 @@ function updateSetting($key, $value) {
 }
 
 /**
+ * Get Pagination Data
+ */
+function getPagination($totalRecords, $perPage = 20) {
+    $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+    $totalPages = ceil($totalRecords / $perPage);
+    $offset = ($page - 1) * $perPage;
+    
+    return [
+        'page' => $page,
+        'perPage' => $perPage,
+        'totalPages' => $totalPages,
+        'totalRecords' => $totalRecords,
+        'offset' => $offset,
+        'hasNext' => $page < $totalPages,
+        'hasPrev' => $page > 1
+    ];
+}
+
+/**
+ * Render Pagination
+ */
+function renderPagination($pagination) {
+    if ($pagination['totalPages'] <= 1) return '';
+    
+    global $current_lang;
+    $page = $pagination['page'];
+    $totalPages = $pagination['totalPages'];
+    
+    // Preserve existing query parameters
+    $queryParams = $_GET;
+    unset($queryParams['page']);
+    $queryString = http_build_query($queryParams);
+    $baseUrl = '?' . ($queryString ? $queryString . '&' : '');
+    
+    $html = '<div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-t">';
+    $html .= '<div class="text-sm text-gray-700">';
+    $html .= ($current_lang === 'fa' ? 'صفحه ' : 'Page ') . $page . ($current_lang === 'fa' ? ' از ' : ' of ') . $totalPages;
+    $html .= ' (' . number_format($pagination['totalRecords']) . ($current_lang === 'fa' ? ' رکورد)' : ' records)');
+    $html .= '</div>';
+    $html .= '<div class="flex gap-2">';
+    
+    // Previous
+    if ($pagination['hasPrev']) {
+        $html .= '<a href="' . $baseUrl . 'page=' . ($page - 1) . '" class="px-3 py-1 border rounded hover:bg-gray-100">' . ($current_lang === 'fa' ? 'قبلی' : 'Previous') . '</a>';
+    }
+    
+    // Pages
+    $start = max(1, $page - 2);
+    $end = min($totalPages, $page + 2);
+    
+    if ($start > 1) {
+        $html .= '<a href="' . $baseUrl . 'page=1" class="px-3 py-1 border rounded hover:bg-gray-100">1</a>';
+        if ($start > 2) $html .= '<span class="px-3 py-1">...</span>';
+    }
+    
+    for ($i = $start; $i <= $end; $i++) {
+        $active = $i === $page ? 'bg-blue-600 text-white' : 'hover:bg-gray-100';
+        $html .= '<a href="' . $baseUrl . 'page=' . $i . '" class="px-3 py-1 border rounded ' . $active . '">' . $i . '</a>';
+    }
+    
+    if ($end < $totalPages) {
+        if ($end < $totalPages - 1) $html .= '<span class="px-3 py-1">...</span>';
+        $html .= '<a href="' . $baseUrl . 'page=' . $totalPages . '" class="px-3 py-1 border rounded hover:bg-gray-100">' . $totalPages . '</a>';
+    }
+    
+    // Next
+    if ($pagination['hasNext']) {
+        $html .= '<a href="' . $baseUrl . 'page=' . ($page + 1) . '" class="px-3 py-1 border rounded hover:bg-gray-100">' . ($current_lang === 'fa' ? 'بعدی' : 'Next') . '</a>';
+    }
+    
+    $html .= '</div></div>';
+    return $html;
+}
+
+/**
  * JSON Response
  */
 function jsonResponse($data, $statusCode = 200) {

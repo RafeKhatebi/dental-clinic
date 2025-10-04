@@ -7,8 +7,10 @@ if (!hasRole('admin')) {
 
 include '../includes/header.php';
 
-// Get all users
-$users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name");
+// Get all users with pagination
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM users")['count'];
+$pagination = getPagination($totalRecords, 20);
+$users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}");
 ?>
 
 <div class="space-y-6">
@@ -74,6 +76,7 @@ $users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name");
                     </tbody>
                 </table>
             </div>
+            <?php echo renderPagination($pagination); ?>
         <?php endif; ?>
     </div>
 </div>
