@@ -31,6 +31,76 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             background-color: #3B82F6;
             color: white;
         }
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3B82F6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: #1f2937;
+            color: white;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 5px;
+        }
+        [data-tooltip]:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            z-index: 1000;
+        }
+        /* Confirm Dialog */
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+        }
+        .confirm-dialog.active { display: flex; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -116,13 +186,37 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                 </div>
                 
-                <a href="<?php echo BASE_URL; ?>/reports/index.php" 
-                   class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/reports/') !== false ? 'active' : ''; ?>">
-                    <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <?php echo $lang['menu_reports']; ?>
-                </a>
+                <!-- Reports -->
+                <div class="mt-2">
+                    <button onclick="toggleSubmenu('reports')" class="sidebar-link flex items-center justify-between w-full px-6 py-3 hover:bg-gray-800 transition">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span><?php echo $lang['menu_reports']; ?></span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform" id="reports-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="reports-submenu" class="hidden bg-gray-800">
+                        <a href="<?php echo BASE_URL; ?>/reports/financial_summary.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'financial_summary.php' ? 'active' : ''; ?>">
+                            خلاصه مالی
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/reports/trends.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'trends.php' ? 'active' : ''; ?>">
+                            نمودارهای روند
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/reports/doctor_performance.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'doctor_performance.php' ? 'active' : ''; ?>">
+                            عملکرد دکتر
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/reports/medicine_inventory.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'medicine_inventory.php' ? 'active' : ''; ?>">
+                            موجودی دارو
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/reports/index.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'index.php' && strpos($_SERVER['PHP_SELF'], '/reports/') !== false ? 'active' : ''; ?>">
+                            سایر گزارشات
+                        </a>
+                    </div>
+                </div>
                 
                 <?php if (hasRole('admin')): ?>
                 <a href="<?php echo BASE_URL; ?>/users/index.php" 
@@ -224,3 +318,26 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6">
+                <!-- Breadcrumb -->
+                <nav class="mb-4 text-sm" id="breadcrumb">
+                    <ol class="flex items-center gap-2 text-gray-600">
+                        <li><a href="<?php echo BASE_URL; ?>/dashboard.php" class="hover:text-blue-600">🏠 داشبورد</a></li>
+                    </ol>
+                </nav>
+                
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="loading-overlay">
+                    <div class="spinner"></div>
+                </div>
+                
+                <!-- Confirm Dialog -->
+                <div id="confirmDialog" class="confirm-dialog">
+                    <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4">
+                        <h3 class="text-lg font-bold mb-4" id="confirmTitle">تایید</h3>
+                        <p class="text-gray-600 mb-6" id="confirmMessage"></p>
+                        <div class="flex gap-3 justify-end">
+                            <button onclick="window.confirmCallback(false)" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">انصراف</button>
+                            <button onclick="window.confirmCallback(true)" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">تایید</button>
+                        </div>
+                    </div>
+                </div>

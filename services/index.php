@@ -2,10 +2,31 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-// Get all services with pagination
-$totalRecords = fetchOne("SELECT COUNT(*) as count FROM services")['count'];
+// Get all services with pagination and filters
+$category = $_GET['category'] ?? '';
+$status = $_GET['status'] ?? '';
+
+$whereClauses = [];
+$params = [];
+
+if (!empty($category)) {
+    $whereClauses[] = "category = ?";
+    $params[] = $category;
+}
+
+if ($status !== '') {
+    $whereClauses[] = "is_active = ?";
+    $params[] = $status;
+}
+
+$whereClause = !empty($whereClauses) ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
+
+// Get categories for filter
+$categories = fetchAll("SELECT DISTINCT category FROM services WHERE category IS NOT NULL AND category != '' ORDER BY category");
+
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM services $whereClause", $params)['count'];
 $pagination = getPagination($totalRecords, 20);
-$services = fetchAll("SELECT * FROM services ORDER BY category, service_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}");
+$services = fetchAll("SELECT * FROM services $whereClause ORDER BY category, service_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}", $params);
 ?>
 
 <div class="space-y-6">
@@ -17,6 +38,48 @@ $services = fetchAll("SELECT * FROM services ORDER BY category, service_name LIM
             + <?php echo $lang['add_service']; ?>
         </a>
         <?php endif; ?>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <form method="GET" class="space-y-4">
+            <div class="flex gap-4">
+                <button type="button" onclick="document.getElementById('advFilters').classList.toggle('hidden')" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition" data-tooltip="فیلترها">
+                    ⚙ فیلتر
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                    اعمال فیلتر
+                </button>
+                <?php if (!empty($category) || $status !== ''): ?>
+                <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                    <?php echo $lang['cancel']; ?>
+                </a>
+                <?php endif; ?>
+            </div>
+            
+            <div id="advFilters" class="<?php echo (!empty($category) || $status !== '') ? '' : 'hidden'; ?> grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">دستهبندی</label>
+                    <select name="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">همه</option>
+                        <?php foreach ($categories as $cat): ?>
+                        <option value="<?php echo htmlspecialchars($cat['category']); ?>" <?php echo $category === $cat['category'] ? 'selected' : ''; ?>>
+                            <?php echo isset($lang[$cat['category']]) ? $lang[$cat['category']] : htmlspecialchars($cat['category']); ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">وضعیت</label>
+                    <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">همه</option>
+                        <option value="1" <?php echo $status === '1' ? 'selected' : ''; ?>>فعال</option>
+                        <option value="0" <?php echo $status === '0' ? 'selected' : ''; ?>>غیرفعال</option>
+                    </select>
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- Services Table -->

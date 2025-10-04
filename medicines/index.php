@@ -2,16 +2,38 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-// Get all medicines with pagination
+// Get all medicines with pagination and filters
 $search = $_GET['search'] ?? '';
-$whereClause = '';
+$category = $_GET['category'] ?? '';
+$lowStock = $_GET['low_stock'] ?? '';
+$expiring = $_GET['expiring'] ?? '';
+
+$whereClauses = [];
 $params = [];
 
 if (!empty($search)) {
-    $whereClause = "WHERE medicine_code LIKE ? OR medicine_name LIKE ? OR medicine_name_en LIKE ?";
+    $whereClauses[] = "(medicine_code LIKE ? OR medicine_name LIKE ? OR medicine_name_en LIKE ?)";
     $searchParam = "%$search%";
-    $params = [$searchParam, $searchParam, $searchParam];
+    $params = array_merge($params, [$searchParam, $searchParam, $searchParam]);
 }
+
+if (!empty($category)) {
+    $whereClauses[] = "category = ?";
+    $params[] = $category;
+}
+
+if ($lowStock === '1') {
+    $whereClauses[] = "stock_quantity <= min_stock_level";
+}
+
+if ($expiring === '1') {
+    $whereClauses[] = "expiry_date IS NOT NULL AND DATE(expiry_date) <= DATE('now', '+30 days')";
+}
+
+$whereClause = !empty($whereClauses) ? 'WHERE ' . implode(' AND ', $whereClauses) : '';
+
+// Get categories for filter
+$categories = fetchAll("SELECT DISTINCT category FROM medicines WHERE category IS NOT NULL AND category != '' ORDER BY category");
 
 $totalRecords = fetchOne("SELECT COUNT(*) as count FROM medicines $whereClause", $params)['count'];
 $pagination = getPagination($totalRecords, 20);
@@ -32,20 +54,54 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
         </div>
     </div>
 
-    <!-- Search Bar -->
+    <!-- Search & Filters -->
     <div class="bg-white rounded-lg shadow-sm p-4">
-        <form method="GET" class="flex gap-4">
-            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" 
-                placeholder="<?php echo $lang['search']; ?>..." 
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                <?php echo $lang['search']; ?>
-            </button>
-            <?php if (!empty($search)): ?>
-            <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
-                <?php echo $lang['cancel']; ?>
-            </a>
-            <?php endif; ?>
+        <form method="GET" class="space-y-4">
+            <div class="flex gap-4">
+                <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" 
+                    placeholder="<?php echo $lang['search']; ?>..." 
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                <button type="button" onclick="document.getElementById('advFilters').classList.toggle('hidden')" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition" data-tooltip="فیلترهای پیشرفته">
+                    ⚙ فیلتر
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                    <?php echo $lang['search']; ?>
+                </button>
+                <?php if (!empty($search) || !empty($category) || $lowStock === '1' || $expiring === '1'): ?>
+                <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                    <?php echo $lang['cancel']; ?>
+                </a>
+                <?php endif; ?>
+            </div>
+            
+            <div id="advFilters" class="<?php echo (!empty($category) || $lowStock === '1' || $expiring === '1') ? '' : 'hidden'; ?> grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی</label>
+                    <select name="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">همه</option>
+                        <?php foreach ($categories as $cat): ?>
+                        <option value="<?php echo htmlspecialchars($cat['category']); ?>" <?php echo $category === $cat['category'] ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($cat['category']); ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">موجودی کم</label>
+                    <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer">
+                        <input type="checkbox" name="low_stock" value="1" <?php echo $lowStock === '1' ? 'checked' : ''; ?> class="w-4 h-4">
+                        <span>فقط داروهای کم موجود</span>
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">انقضا نزدیک</label>
+                    <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer">
+                        <input type="checkbox" name="expiring" value="1" <?php echo $expiring === '1' ? 'checked' : ''; ?> class="w-4 h-4">
+                        <span>فقط داروهای رو به انقضا</span>
+                    </label>
+                </div>
+            </div>
         </form>
     </div>
 

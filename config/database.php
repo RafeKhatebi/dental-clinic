@@ -96,19 +96,43 @@ function executeQuery($query, $params = [])
 /**
  * Fetch All Records
  */
-function fetchAll($query, $params = [])
+function fetchAll($query, $params = [], $useCache = false)
 {
+    if ($useCache) {
+        $cacheKey = getCacheKey($query, $params);
+        $cached = getCache($cacheKey);
+        if ($cached !== null) return $cached;
+    }
+    
     $stmt = executeQuery($query, $params);
-    return $stmt->fetchAll();
+    $result = $stmt->fetchAll();
+    
+    if ($useCache) {
+        setCache($cacheKey, $result);
+    }
+    
+    return $result;
 }
 
 /**
  * Fetch Single Record
  */
-function fetchOne($query, $params = [])
+function fetchOne($query, $params = [], $useCache = false)
 {
+    if ($useCache) {
+        $cacheKey = getCacheKey($query, $params);
+        $cached = getCache($cacheKey);
+        if ($cached !== null) return $cached;
+    }
+    
     $stmt = executeQuery($query, $params);
-    return $stmt->fetch();
+    $result = $stmt->fetch();
+    
+    if ($useCache) {
+        setCache($cacheKey, $result);
+    }
+    
+    return $result;
 }
 
 /**
@@ -116,6 +140,7 @@ function fetchOne($query, $params = [])
  */
 function insertRecord($table, $data)
 {
+    clearCache($table);
     $db = getDBConnection();
     $columns = implode(', ', array_keys($data));
     $placeholders = ':' . implode(', :', array_keys($data));
@@ -132,6 +157,7 @@ function insertRecord($table, $data)
  */
 function updateRecord($table, $data, $where, $whereParams = [])
 {
+    clearCache($table);
     $db = getDBConnection();
     $set = [];
 
@@ -154,6 +180,7 @@ function updateRecord($table, $data, $where, $whereParams = [])
  */
 function deleteRecord($table, $where, $params = [])
 {
+    clearCache($table);
     $db = getDBConnection();
     $query = "DELETE FROM $table WHERE $where";
     $stmt = $db->prepare($query);
@@ -164,6 +191,61 @@ function deleteRecord($table, $where, $params = [])
 
 // Global database connection for transactions
 $GLOBALS['db_connection'] = null;
+
+// Simple cache storage
+$GLOBALS['query_cache'] = [];
+$GLOBALS['cache_enabled'] = true;
+$GLOBALS['cache_ttl'] = 300; // 5 minutes
+
+/**
+ * Get Cache Key
+ */
+function getCacheKey($query, $params = []) {
+    return md5($query . serialize($params));
+}
+
+/**
+ * Get from Cache
+ */
+function getCache($key) {
+    if (!$GLOBALS['cache_enabled']) return null;
+    
+    if (isset($GLOBALS['query_cache'][$key])) {
+        $cache = $GLOBALS['query_cache'][$key];
+        if (time() - $cache['time'] < $GLOBALS['cache_ttl']) {
+            return $cache['data'];
+        }
+        unset($GLOBALS['query_cache'][$key]);
+    }
+    return null;
+}
+
+/**
+ * Set Cache
+ */
+function setCache($key, $data) {
+    if (!$GLOBALS['cache_enabled']) return;
+    
+    $GLOBALS['query_cache'][$key] = [
+        'data' => $data,
+        'time' => time()
+    ];
+}
+
+/**
+ * Clear Cache
+ */
+function clearCache($pattern = null) {
+    if ($pattern === null) {
+        $GLOBALS['query_cache'] = [];
+    } else {
+        foreach (array_keys($GLOBALS['query_cache']) as $key) {
+            if (strpos($key, $pattern) !== false) {
+                unset($GLOBALS['query_cache'][$key]);
+            }
+        }
+    }
+}
 
 /**
  * Begin Transaction

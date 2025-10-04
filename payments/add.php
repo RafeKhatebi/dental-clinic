@@ -113,12 +113,13 @@ include '../includes/header.php';
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <?php echo $lang['due_date']; ?> (<?php echo $lang['first_name']; ?>)
+                            <?php echo $lang['due_date']; ?> (اولین)
                         </label>
                         <input type="date" name="first_due_date" id="first_due_date" value="<?php echo date('Y-m-d', strtotime('+1 month')); ?>"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                     </div>
                 </div>
+                <div id="installment-preview" class="mt-4"></div>
             </div>
 
             <!-- Notes -->
@@ -160,10 +161,39 @@ document.getElementById('payment_method').addEventListener('change', function() 
     const installmentDetails = document.getElementById('installment-details');
     if (this.value === 'installment') {
         installmentDetails.classList.remove('hidden');
+        calculateInstallments();
     } else {
         installmentDetails.classList.add('hidden');
     }
 });
+
+// Calculate and preview installments
+function calculateInstallments() {
+    const amount = parseFloat(document.getElementById('amount').value) || 0;
+    const count = parseInt(document.getElementById('installment_count').value) || 3;
+    const firstDue = document.getElementById('first_due_date').value;
+    
+    if (amount <= 0 || !firstDue) return;
+    
+    const installmentAmount = Math.round(amount / count);
+    const preview = document.getElementById('installment-preview');
+    
+    let html = '<div class="bg-white rounded border p-3"><h4 class="font-semibold mb-2 text-sm">پیشنمایش اقساط:</h4><div class="space-y-1 text-sm">';
+    
+    for (let i = 1; i <= count; i++) {
+        const dueDate = new Date(firstDue);
+        dueDate.setMonth(dueDate.getMonth() + (i - 1));
+        const dueDateStr = dueDate.toLocaleDateString('fa-IR');
+        html += `<div class="flex justify-between"><span>قسط ${i}:</span><span class="font-semibold">${installmentAmount.toLocaleString()} افغانی - ${dueDateStr}</span></div>`;
+    }
+    
+    html += '</div></div>';
+    preview.innerHTML = html;
+}
+
+document.getElementById('amount').addEventListener('input', calculateInstallments);
+document.getElementById('installment_count').addEventListener('input', calculateInstallments);
+document.getElementById('first_due_date').addEventListener('change', calculateInstallments);
 
 // Form submission
 document.getElementById('payment-form').addEventListener('submit', async (e) => {
