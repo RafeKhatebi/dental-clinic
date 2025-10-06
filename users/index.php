@@ -15,9 +15,9 @@ $users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name LIMIT 
 
 <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['user_list']; ?></h1>
-        <div class="flex gap-2">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800"><?php echo $lang['user_list']; ?></h1>
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
             <button onclick="bulkAction('activate')" id="bulkActivate" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
                 ✔ فعال
             </button>
@@ -43,7 +43,8 @@ $users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name LIMIT 
                 <?php echo $lang['no_data']; ?>
             </div>
         <?php else: ?>
-            <div class="overflow-x-auto">
+            <!-- Desktop Table -->
+            <div class="overflow-x-auto table-desktop">
                 <table id="usersTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -102,7 +103,69 @@ $users = fetchAll("SELECT * FROM users ORDER BY is_active DESC, full_name LIMIT 
                     </tbody>
                 </table>
             </div>
-            <?php echo renderPagination($pagination); ?>
+            
+            <!-- Mobile Cards -->
+            <div class="cards-mobile space-y-4 p-4">
+                <?php foreach ($users as $user): ?>
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3 pb-3 border-b">
+                        <input type="checkbox" class="row-checkbox w-5 h-5" value="<?php echo $user['id']; ?>" onchange="updateBulkButtons()" <?php echo $user['id'] == $_SESSION['user_id'] ? 'disabled' : ''; ?>>
+                        <?php if ($user['id'] != $_SESSION['user_id']): ?>
+                        <div class="flex gap-3">
+                            <a href="edit.php?id=<?php echo $user['id']; ?>" class="text-green-600 hover:text-green-900 text-sm font-medium">ویرایش</a>
+                            <button onclick="deleteUser(<?php echo $user['id']; ?>)" class="text-red-600 hover:text-red-900 text-sm font-medium">حذف</button>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام کاربری:</span>
+                            <span class="text-sm font-semibold text-blue-600"><?php echo htmlspecialchars($user['username']); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام کامل:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($user['full_name']); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">ایمیل:</span>
+                            <span class="text-sm text-gray-900"><?php echo htmlspecialchars($user['email'] ?: '-'); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نقش:</span>
+                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                                <?php echo $lang[$user['role']]; ?>
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">وضعیت:</span>
+                            <span class="px-2 py-1 text-xs rounded-full <?php echo $user['is_active'] ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
+                                <?php echo $user['is_active'] ? $lang['active'] : $lang['inactive']; ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Desktop Pagination -->
+            <div class="pagination-desktop">
+                <?php echo renderPagination($pagination); ?>
+            </div>
+            
+            <!-- Mobile Pagination -->
+            <?php if ($pagination['totalPages'] > 1): ?>
+            <div class="pagination-mobile flex items-center justify-between p-4 bg-white border-t">
+                <a href="?page=<?php echo max(1, $pagination['currentPage'] - 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === 1 ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    قبلی
+                </a>
+                <span class="text-sm text-gray-600">صفحه <?php echo $pagination['currentPage']; ?> از <?php echo $pagination['totalPages']; ?></span>
+                <a href="?page=<?php echo min($pagination['totalPages'], $pagination['currentPage'] + 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === $pagination['totalPages'] ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    بعدی
+                </a>
+            </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

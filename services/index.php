@@ -38,9 +38,9 @@ $services = fetchAll("SELECT * FROM services $whereClause ORDER BY category, ser
 
 <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['service_list']; ?></h1>
-        <div class="flex gap-2">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800"><?php echo $lang['service_list']; ?></h1>
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
             <button onclick="bulkAction('activate')" id="bulkActivate" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
                 ✔ فعال
             </button>
@@ -64,7 +64,7 @@ $services = fetchAll("SELECT * FROM services $whereClause ORDER BY category, ser
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow-sm p-4">
         <form method="GET" class="space-y-4">
-            <div class="flex gap-4">
+            <div class="flex flex-col md:flex-row gap-4">
                 <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="جستجو..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <button type="button" onclick="document.getElementById('advFilters').classList.toggle('hidden')" 
                     class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition" data-tooltip="فیلترها">
@@ -111,7 +111,8 @@ $services = fetchAll("SELECT * FROM services $whereClause ORDER BY category, ser
                 <?php echo $lang['no_data']; ?>
             </div>
         <?php else: ?>
-            <div class="overflow-x-auto">
+            <!-- Desktop Table -->
+            <div class="overflow-x-auto table-desktop">
                 <table id="servicesTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -163,7 +164,66 @@ $services = fetchAll("SELECT * FROM services $whereClause ORDER BY category, ser
                     </tbody>
                 </table>
             </div>
-            <?php echo renderPagination($pagination); ?>
+            
+            <!-- Mobile Cards -->
+            <div class="cards-mobile space-y-4 p-4">
+                <?php foreach ($services as $service): ?>
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3 pb-3 border-b">
+                        <input type="checkbox" class="row-checkbox w-5 h-5" value="<?php echo $service['id']; ?>" onchange="updateBulkButtons()">
+                        <?php if (hasRole(['admin', 'dentist'])): ?>
+                        <a href="edit.php?id=<?php echo $service['id']; ?>" class="text-green-600 hover:text-green-900 text-sm font-medium">ویرایش</a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام خدمت:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($service['service_name']); ?></span>
+                        </div>
+                        <?php if (!empty($service['service_name_en'])): ?>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام انگلیسی:</span>
+                            <span class="text-sm text-gray-500"><?php echo htmlspecialchars($service['service_name_en']); ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">دسته:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo ($service['category'] && isset($lang[$service['category']])) ? $lang[$service['category']] : ($service['category'] ?: '-'); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">قیمت:</span>
+                            <span class="text-sm font-semibold text-green-600"><?php echo formatCurrency($service['base_price']); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">وضعیت:</span>
+                            <span class="px-2 py-1 text-xs rounded-full <?php echo $service['is_active'] ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'; ?>">
+                                <?php echo $service['is_active'] ? $lang['active'] : $lang['inactive']; ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Desktop Pagination -->
+            <div class="pagination-desktop">
+                <?php echo renderPagination($pagination); ?>
+            </div>
+            
+            <!-- Mobile Pagination -->
+            <?php if ($pagination['totalPages'] > 1): ?>
+            <div class="pagination-mobile flex items-center justify-between p-4 bg-white border-t">
+                <a href="?page=<?php echo max(1, $pagination['currentPage'] - 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === 1 ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    قبلی
+                </a>
+                <span class="text-sm text-gray-600">صفحه <?php echo $pagination['currentPage']; ?> از <?php echo $pagination['totalPages']; ?></span>
+                <a href="?page=<?php echo min($pagination['totalPages'], $pagination['currentPage'] + 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === $pagination['totalPages'] ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    بعدی
+                </a>
+            </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

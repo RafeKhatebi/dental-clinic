@@ -271,7 +271,8 @@ for ($i = 6; $i >= 0; $i--) {
         <?php if (empty($recentPatients)): ?>
             <p class="text-gray-500 text-center py-8"><?php echo $lang['no_data']; ?></p>
         <?php else: ?>
-            <div class="overflow-x-auto">
+            <!-- Desktop Table -->
+            <div class="overflow-x-auto table-desktop">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -309,6 +310,32 @@ for ($i = 6; $i >= 0; $i--) {
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- Mobile Cards -->
+            <div class="cards-mobile space-y-3">
+                <?php foreach ($recentPatients as $patient): ?>
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-600">کد:</span>
+                            <span class="text-xs font-semibold text-blue-600"><?php echo $patient['patient_code']; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-600">نام:</span>
+                            <span class="text-xs font-semibold text-gray-900"><?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-600">تلفن:</span>
+                            <span class="text-xs text-gray-900 dir-ltr"><?php echo $patient['phone']; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-600">مبلغ:</span>
+                            <span class="text-xs font-semibold text-green-600"><?php echo formatCurrency($patient['final_price']); ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>

@@ -26,9 +26,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     </style>
     <?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/mobile.css">
     <script src="<?php echo BASE_URL; ?>/assets/js/shortcuts.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/bulk-actions.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/validation.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/mobile.js" defer></script>
     <style>
         .sidebar-link.active {
             background-color: #3B82F6;

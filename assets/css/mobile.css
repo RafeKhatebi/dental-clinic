@@ -1,0 +1,59 @@
+/* Mobile Responsive - فقط 2KB */
+@media (max-width: 768px) {
+    /* جداول - مخفی در موبایل */
+    .table-desktop { display: none !important; }
+    .cards-mobile { display: block !important; }
+    
+    /* دکمههای Header */
+    .header-actions { 
+        flex-direction: column; 
+        width: 100%; 
+    }
+    .header-actions > * { 
+        width: 100%; 
+        text-align: center; 
+    }
+    
+    /* Toast Notifications */
+    .toast { 
+        min-width: 90% !important; 
+        right: 5% !important; 
+        left: 5% !important; 
+    }
+    
+    /* Sidebar */
+    #sidebar.mobile-open {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 50 !important;
+        display: flex !important;
+    }
+    
+    /* Pagination */
+    .pagination-desktop { display: none !important; }
+    .pagination-mobile { display: flex !important; }
+    
+    /* Stats Cards - فاصله کمتر */
+    .stats-grid { gap: 1rem !important; }
+    
+    /* Charts - ارتفاع ثابت */
+    .chart-container { 
+        height: 250px !important; 
+        max-height: 250px !important; 
+    }
+    
+    /* Filters - Stack */
+    .filter-row { 
+        flex-direction: column !important; 
+    }
+    .filter-row > * { 
+        width: 100% !important; 
+    }
+}
+
+/* Desktop - جداول نمایش، کارتها مخفی */
+@media (min-width: 769px) {
+    .table-desktop { display: table !important; }
+    .cards-mobile { display: none !important; }
+    .pagination-mobile { display: none !important; }
+}

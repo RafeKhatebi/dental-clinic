@@ -42,9 +42,9 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
 
 <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['medicine_list']; ?></h1>
-        <div class="flex gap-2">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800"><?php echo $lang['medicine_list']; ?></h1>
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
             <button onclick="bulkAction('activate')" id="bulkActivate" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
                 ✔ فعال
             </button>
@@ -69,7 +69,7 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
     <!-- Search & Filters -->
     <div class="bg-white rounded-lg shadow-sm p-4">
         <form method="GET" class="space-y-4">
-            <div class="flex gap-4">
+            <div class="flex flex-col md:flex-row gap-4">
                 <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" 
                     placeholder="<?php echo $lang['search']; ?>..." 
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
@@ -124,7 +124,8 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
                 <?php echo $lang['no_data']; ?>
             </div>
         <?php else: ?>
-            <div class="overflow-x-auto">
+            <!-- Desktop Table -->
+            <div class="overflow-x-auto table-desktop">
                 <table id="medicinesTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -202,7 +203,85 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
                     </tbody>
                 </table>
             </div>
-            <?php echo renderPagination($pagination); ?>
+            
+            <!-- Mobile Cards -->
+            <div class="cards-mobile space-y-4 p-4">
+                <?php foreach ($medicines as $medicine): ?>
+                <?php 
+                    $isLowStock = $medicine['stock_quantity'] <= $medicine['min_stock_level'];
+                    $isExpiringSoon = !empty($medicine['expiry_date']) && strtotime($medicine['expiry_date']) <= strtotime('+30 days');
+                ?>
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm <?php echo $isLowStock || $isExpiringSoon ? 'border-yellow-400 bg-yellow-50' : ''; ?>">
+                    <div class="flex items-center justify-between mb-3 pb-3 border-b">
+                        <input type="checkbox" class="row-checkbox w-5 h-5" value="<?php echo $medicine['id']; ?>" onchange="updateBulkButtons()">
+                        <div class="flex gap-3">
+                            <a href="edit.php?id=<?php echo $medicine['id']; ?>" class="text-green-600 hover:text-green-900 text-sm font-medium">ویرایش</a>
+                            <a href="stock.php?id=<?php echo $medicine['id']; ?>" class="text-blue-600 hover:text-blue-900 text-sm font-medium">موجودی</a>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">کد دارو:</span>
+                            <span class="text-sm font-semibold text-blue-600"><?php echo $medicine['medicine_code']; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($medicine['medicine_name']); ?></span>
+                        </div>
+                        <?php if (!empty($medicine['medicine_name_en'])): ?>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام انگلیسی:</span>
+                            <span class="text-sm text-gray-500"><?php echo htmlspecialchars($medicine['medicine_name_en']); ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">دسته:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($medicine['category'] ?: '-'); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">موجودی:</span>
+                            <span class="text-sm font-semibold <?php echo $isLowStock ? 'text-red-600' : 'text-gray-900'; ?>">
+                                <?php echo $medicine['stock_quantity']; ?> <?php echo $medicine['unit']; ?>
+                                <?php if ($isLowStock): ?> ⚠<?php endif; ?>
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">قیمت:</span>
+                            <span class="text-sm font-semibold text-green-600"><?php echo formatCurrency($medicine['sale_price']); ?></span>
+                        </div>
+                        <?php if (!empty($medicine['expiry_date'])): ?>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">انقضا:</span>
+                            <span class="text-sm font-semibold <?php echo $isExpiringSoon ? 'text-red-600' : 'text-gray-900'; ?>">
+                                <?php echo formatDate($medicine['expiry_date']); ?>
+                                <?php if ($isExpiringSoon): ?> ⚠<?php endif; ?>
+                            </span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Desktop Pagination -->
+            <div class="pagination-desktop">
+                <?php echo renderPagination($pagination); ?>
+            </div>
+            
+            <!-- Mobile Pagination -->
+            <?php if ($pagination['totalPages'] > 1): ?>
+            <div class="pagination-mobile flex items-center justify-between p-4 bg-white border-t">
+                <a href="?page=<?php echo max(1, $pagination['currentPage'] - 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === 1 ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    قبلی
+                </a>
+                <span class="text-sm text-gray-600">صفحه <?php echo $pagination['currentPage']; ?> از <?php echo $pagination['totalPages']; ?></span>
+                <a href="?page=<?php echo min($pagination['totalPages'], $pagination['currentPage'] + 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === $pagination['totalPages'] ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    بعدی
+                </a>
+            </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

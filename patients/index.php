@@ -53,9 +53,9 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
 
 <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['patient_list']; ?></h1>
-        <div class="flex gap-2">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800"><?php echo $lang['patient_list']; ?></h1>
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
             <button onclick="bulkAction('delete')" id="bulkDelete" class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
                 🗑 حذف
             </button>
@@ -71,7 +71,7 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
     <!-- Search & Filters -->
     <div class="bg-white rounded-lg shadow-sm p-4">
         <form method="GET" class="space-y-4">
-            <div class="flex gap-4">
+            <div class="flex flex-col md:flex-row gap-4">
                 <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" 
                     placeholder="<?php echo $lang['search']; ?>..." 
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
@@ -138,7 +138,8 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
                 <?php endif; ?>
             </div>
         <?php else: ?>
-            <div class="overflow-x-auto">
+            <!-- Desktop Table -->
+            <div class="overflow-x-auto table-desktop">
                 <table id="patientsTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -195,7 +196,64 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
                     </tbody>
                 </table>
             </div>
-            <?php echo renderPagination($pagination); ?>
+            
+            <!-- Mobile Cards -->
+            <div class="cards-mobile space-y-4 p-4">
+                <?php foreach ($patients as $patient): ?>
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3 pb-3 border-b">
+                        <input type="checkbox" class="row-checkbox w-5 h-5" value="<?php echo $patient['id']; ?>" onchange="updateBulkButtons()">
+                        <div class="flex gap-3">
+                            <a href="view.php?id=<?php echo $patient['id']; ?>" class="text-blue-600 hover:text-blue-900 text-sm font-medium">مشاهده</a>
+                            <a href="edit.php?id=<?php echo $patient['id']; ?>" class="text-green-600 hover:text-green-900 text-sm font-medium">ویرایش</a>
+                            <button onclick="deletePatient(<?php echo $patient['id']; ?>)" class="text-red-600 hover:text-red-900 text-sm font-medium">حذف</button>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">کد بیمار:</span>
+                            <span class="text-sm font-semibold text-blue-600"><?php echo $patient['patient_code']; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">نام:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">سن:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo $patient['age'] ?? '-'; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">جنسیت:</span>
+                            <span class="text-sm font-semibold text-gray-900"><?php echo $patient['gender'] ? $lang[$patient['gender']] : '-'; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">تلفن:</span>
+                            <span class="text-sm font-semibold text-gray-900 dir-ltr"><?php echo $patient['phone']; ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Desktop Pagination -->
+            <div class="pagination-desktop">
+                <?php echo renderPagination($pagination); ?>
+            </div>
+            
+            <!-- Mobile Pagination -->
+            <?php if ($pagination['totalPages'] > 1): ?>
+            <div class="pagination-mobile flex items-center justify-between p-4 bg-white border-t">
+                <a href="?page=<?php echo max(1, $pagination['currentPage'] - 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === 1 ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    قبلی
+                </a>
+                <span class="text-sm text-gray-600">صفحه <?php echo $pagination['currentPage']; ?> از <?php echo $pagination['totalPages']; ?></span>
+                <a href="?page=<?php echo min($pagination['totalPages'], $pagination['currentPage'] + 1); ?>" 
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg <?php echo $pagination['currentPage'] === $pagination['totalPages'] ? 'opacity-50 pointer-events-none' : ''; ?>">
+                    بعدی
+                </a>
+            </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>
