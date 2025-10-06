@@ -168,6 +168,46 @@
             }, duration);
         }
 
+        // Notifications
+        async function loadNotifications() {
+            try {
+                const response = await fetch('<?php echo BASE_URL; ?>/api/notifications/get.php');
+                const data = await response.json();
+                if (data.success && data.data.count > 0) {
+                    document.getElementById('notif-badge').textContent = data.data.count;
+                    document.getElementById('notif-badge').classList.remove('hidden');
+                    
+                    const menu = document.getElementById('notif-menu');
+                    menu.innerHTML = data.data.notifications.map(n => `
+                        <a href="${n.link}" class="block px-4 py-3 hover:bg-gray-50 border-b">
+                            <div class="flex items-start gap-3">
+                                <span class="text-2xl">${n.icon}</span>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-sm text-gray-900">${n.title}</p>
+                                    <p class="text-xs text-gray-600">${n.message}</p>
+                                </div>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+            } catch (e) {}
+        }
+        
+        document.getElementById('notif-button')?.addEventListener('click', () => {
+            document.getElementById('notif-menu').classList.toggle('hidden');
+        });
+        
+        document.addEventListener('click', (e) => {
+            const notifMenu = document.getElementById('notif-menu');
+            const notifButton = document.getElementById('notif-button');
+            if (notifButton && notifMenu && !notifButton.contains(e.target) && !notifMenu.contains(e.target)) {
+                notifMenu.classList.add('hidden');
+            }
+        });
+        
+        loadNotifications();
+        setInterval(loadNotifications, 60000);
+
         // Check for success message in URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('success')) {

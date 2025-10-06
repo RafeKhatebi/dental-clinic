@@ -73,6 +73,32 @@ $partners = fetchAll("
     ORDER BY share_percentage DESC
 ");
 
+// بیماران جدید (30 روز اخیر)
+$newPatientsData = [];
+for ($i = 29; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $count = fetchOne("SELECT COUNT(*) as count FROM patients WHERE DATE(created_at) = ?", [$date])['count'];
+    $newPatientsData[] = ['date' => date('d/m', strtotime($date)), 'count' => $count];
+}
+
+// خدمات پرطرفدار
+$topServices = fetchAll("
+    SELECT service_name, COUNT(*) as count 
+    FROM services 
+    WHERE status != 'template' AND service_date >= ? 
+    GROUP BY service_name 
+    ORDER BY count DESC 
+    LIMIT 5
+", [date('Y-m-d', strtotime('-30 days'))]);
+
+// فروش دارو (7 روز)
+$medicineSales = [];
+for ($i = 6; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $total = fetchOne("SELECT COALESCE(SUM(sale_total_price), 0) as total FROM medicines WHERE sale_date = ?", [$date])['total'];
+    $medicineSales[] = ['date' => date('d/m', strtotime($date)), 'total' => $total];
+}
+
 // Revenue chart data (last 7 days)
 $chartData = [];
 for ($i = 6; $i >= 0; $i--) {
@@ -165,6 +191,27 @@ for ($i = 6; $i >= 0; $i--) {
                     </svg>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- New Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- بیماران جدید -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">بیماران جدید (30 روز)</h2>
+            <canvas id="newPatientsChart"></canvas>
+        </div>
+
+        <!-- خدمات پرطرفدار -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">خدمات پرطرفدار</h2>
+            <canvas id="topServicesChart"></canvas>
+        </div>
+
+        <!-- فروش دارو -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">فروش دارو (7 روز)</h2>
+            <canvas id="medicineSalesChart"></canvas>
         </div>
     </div>
 
@@ -304,6 +351,67 @@ for ($i = 6; $i >= 0; $i--) {
 </div>
 
 <script>
+// بیماران جدید
+const newPatientsData = <?php echo json_encode($newPatientsData); ?>;
+new Chart(document.getElementById('newPatientsChart'), {
+    type: 'line',
+    data: {
+        labels: newPatientsData.map(d => d.date),
+        datasets: [{
+            label: 'بیماران جدید',
+            data: newPatientsData.map(d => d.count),
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// خدمات پرطرفدار
+const topServices = <?php echo json_encode($topServices); ?>;
+new Chart(document.getElementById('topServicesChart'), {
+    type: 'doughnut',
+    data: {
+        labels: topServices.map(s => s.service_name),
+        datasets: [{
+            data: topServices.map(s => s.count),
+            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+// فروش دارو
+const medicineSales = <?php echo json_encode($medicineSales); ?>;
+new Chart(document.getElementById('medicineSalesChart'), {
+    type: 'bar',
+    data: {
+        labels: medicineSales.map(d => d.date),
+        datasets: [{
+            label: 'فروش',
+            data: medicineSales.map(d => d.total),
+            backgroundColor: 'rgba(16, 185, 129, 0.8)'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
 // Revenue Chart
 const ctx = document.getElementById('revenueChart').getContext('2d');
 const chartData = <?php echo json_encode($chartData); ?>;
