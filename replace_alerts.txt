@@ -1,0 +1,15 @@
+partners\add.php
+partners\edit.php
+patients\edit.php
+salaries\add_withdrawal.php
+salaries\index.php
+services\add.php
+services\edit.php
+services\provide.php
+settings\index.php
+staff\add.php
+staff\edit.php
+suppliers\add.php
+users\add.php
+users\edit.php
+users\index.php

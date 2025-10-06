@@ -85,13 +85,13 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
 
         const result = await response.json();
         if (result.success) {
-            alert('<?php echo $lang['update_success']; ?>');
+            showToast('<?php echo $lang['update_success']; ?>', 'success');
             window.location.href = 'view.php?id=<?php echo $id; ?>';
         } else {
-            alert(result.message);
+            showToast(result.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 });
 </script>

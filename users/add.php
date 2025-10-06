@@ -101,13 +101,13 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
         const data = await response.json();
         
         if (data.success) {
-            alert('<?php echo $lang['save_success']; ?>');
+            showToast('<?php echo $lang['save_success']; ?>', 'success');
             window.location.href = 'index.php';
         } else {
-            alert(data.message);
+            showToast(data.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 });
 </script>

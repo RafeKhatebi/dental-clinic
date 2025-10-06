@@ -66,13 +66,13 @@ document.getElementById('withdrawalForm').addEventListener('submit', async (e) =
 
         const result = await response.json();
         if (result.success) {
-            alert('<?php echo $lang['save_success']; ?>');
-            window.location.href = 'index.php?month=<?php echo $month; ?>';
+            showToast('<?php echo $lang['save_success']; ?>', 'success');
+            setTimeout(() => window.location.href = 'index.php?month=<?php echo $month; ?>', 1000);
         } else {
-            alert(result.message);
+            showToast(result.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 });
 </script>

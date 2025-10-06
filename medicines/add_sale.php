@@ -199,7 +199,7 @@ function updateItemPrice(itemId) {
     }
     
     if (quantity > stock) {
-        alert('<?php echo $lang['stock_quantity']; ?>: ' + stock);
+        showToast('<?php echo $lang['stock_quantity']; ?>: ' + stock, 'warning');
         quantityInput.value = stock;
     }
     
@@ -233,7 +233,7 @@ document.getElementById('sale-form').addEventListener('submit', async (e) => {
     
     // Validate at least one item
     if (document.querySelectorAll('.sale-item').length === 0) {
-        alert('<?php echo $lang['required_fields']; ?>');
+        showToast('<?php echo $lang['required_fields']; ?>', 'warning');
         return;
     }
     
@@ -246,13 +246,13 @@ document.getElementById('sale-form').addEventListener('submit', async (e) => {
         const data = await response.json();
         
         if (data.success) {
-            alert('<?php echo $lang['save_success']; ?>');
-            window.location.href = 'view_sale.php?id=' + data.data.id;
+            showToast('<?php echo $lang['save_success']; ?>', 'success');
+            setTimeout(() => window.location.href = 'sales.php', 1000);
         } else {
-            alert(data.message);
+            showToast(data.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 });
 </script>

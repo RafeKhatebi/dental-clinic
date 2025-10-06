@@ -10,9 +10,23 @@ $expenses = fetchAll("SELECT * FROM documents WHERE document_type = 'expense' OR
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['expense_list']; ?></h1>
-        <a href="add.php" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-            + <?php echo $lang['add_expense']; ?>
-        </a>
+        <div class="flex gap-2">
+            <button onclick="bulkAction('activate')" id="bulkActivate" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+                ✔ فعال
+            </button>
+            <button onclick="bulkAction('deactivate')" id="bulkDeactivate" class="hidden bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition">
+                ✖ غیرفعال
+            </button>
+            <button onclick="bulkAction('delete')" id="bulkDelete" class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                🗑 حذف
+            </button>
+            <button onclick="exportToExcel('expensesTable', 'expenses')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                📊 Excel
+            </button>
+            <a href="add.php" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                + <?php echo $lang['add_expense']; ?>
+            </a>
+        </div>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -20,9 +34,12 @@ $expenses = fetchAll("SELECT * FROM documents WHERE document_type = 'expense' OR
             <div class="p-8 text-center text-gray-500"><?php echo $lang['no_data']; ?></div>
         <?php else: ?>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table id="expensesTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-center">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="w-4 h-4 cursor-pointer">
+                            </th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['description'] ?? 'عنوان'; ?></th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['expense_category']; ?></th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['expense_type']; ?></th>
@@ -36,6 +53,9 @@ $expenses = fetchAll("SELECT * FROM documents WHERE document_type = 'expense' OR
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php foreach ($expenses as $expense): ?>
                         <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 text-center">
+                                <input type="checkbox" class="row-checkbox" value="<?php echo $expense['id']; ?>" onchange="updateBulkButtons()" class="w-4 h-4 cursor-pointer">
+                            </td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900"><?php echo htmlspecialchars($expense['title']); ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($expense['expense_category']); ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo $lang[$expense['expense_type']]; ?></td>

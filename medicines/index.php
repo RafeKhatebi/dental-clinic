@@ -45,6 +45,18 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['medicine_list']; ?></h1>
         <div class="flex gap-2">
+            <button onclick="bulkAction('activate')" id="bulkActivate" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+                ✔ فعال
+            </button>
+            <button onclick="bulkAction('deactivate')" id="bulkDeactivate" class="hidden bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition">
+                ✖ غیرفعال
+            </button>
+            <button onclick="bulkAction('delete')" id="bulkDelete" class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                🗑 حذف
+            </button>
+            <button onclick="exportToExcel('medicinesTable', 'medicines')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                📊 Excel
+            </button>
             <a href="sales.php" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition">
                 <?php echo $lang['medicine_sales']; ?>
             </a>
@@ -113,9 +125,12 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
             </div>
         <?php else: ?>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table id="medicinesTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-center">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="w-4 h-4 cursor-pointer">
+                            </th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['medicine_code']; ?></th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['medicine_name']; ?></th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['category']; ?></th>
@@ -132,6 +147,9 @@ $medicines = fetchAll("SELECT * FROM medicines $whereClause ORDER BY medicine_na
                             $isExpiringSoon = !empty($medicine['expiry_date']) && strtotime($medicine['expiry_date']) <= strtotime('+30 days');
                         ?>
                         <tr class="hover:bg-gray-50 <?php echo $isLowStock || $isExpiringSoon ? 'bg-yellow-50' : ''; ?>">
+                            <td class="px-6 py-4 text-center">
+                                <input type="checkbox" class="row-checkbox" value="<?php echo $medicine['id']; ?>" onchange="updateBulkButtons()" class="w-4 h-4 cursor-pointer">
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
                                 <?php echo $medicine['medicine_code']; ?>
                             </td>

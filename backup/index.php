@@ -95,13 +95,13 @@ $backups = fetchAll("SELECT d.*, u.full_name as created_by_name FROM documents d
             const data = await response.json();
 
             if (data.success) {
-                alert('<?php echo $lang['backup_success']; ?>');
-                location.reload();
+                showToast('<?php echo $lang['backup_success']; ?>', 'success');
+                setTimeout(() => location.reload(), 1000);
             } else {
-                alert(data.message);
+                showToast(data.message, 'error');
             }
         } catch (error) {
-            alert('<?php echo $lang['error_occurred']; ?>');
+            showToast('<?php echo $lang['error_occurred']; ?>', 'error');
         }
     }
 
@@ -118,13 +118,13 @@ $backups = fetchAll("SELECT d.*, u.full_name as created_by_name FROM documents d
             const data = await response.json();
 
             if (data.success) {
-                alert('<?php echo $lang['delete_success']; ?>');
-                location.reload();
+                showToast('<?php echo $lang['delete_success']; ?>', 'success');
+                setTimeout(() => location.reload(), 1000);
             } else {
-                alert(data.message);
+                showToast(data.message, 'error');
             }
         } catch (error) {
-            alert('<?php echo $lang['error_occurred']; ?>');
+            showToast('<?php echo $lang['error_occurred']; ?>', 'error');
         }
     }
 </script>

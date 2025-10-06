@@ -56,11 +56,12 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['patient_list']; ?></h1>
         <div class="flex gap-2">
-            <a href="<?php echo BASE_URL; ?>/api/patients/export_excel.php?search=<?php echo urlencode($search); ?>&gender=<?php echo urlencode($gender); ?>&age_from=<?php echo urlencode($ageFrom); ?>&age_to=<?php echo urlencode($ageTo); ?>&date_from=<?php echo urlencode($dateFrom); ?>&date_to=<?php echo urlencode($dateTo); ?>" 
-               class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition" 
-               data-tooltip="دانلود Excel">
-                ⭳ Excel
-            </a>
+            <button onclick="bulkAction('delete')" id="bulkDelete" class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                🗑 حذف
+            </button>
+            <button onclick="exportToExcel('patientsTable', 'patients')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                📊 Excel
+            </button>
             <a href="add.php" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
                 + <?php echo $lang['add_patient']; ?>
             </a>
@@ -138,9 +139,12 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
             </div>
         <?php else: ?>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table id="patientsTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-center">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" class="w-4 h-4 cursor-pointer">
+                            </th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['patient_code']; ?></th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['full_name']; ?></th>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['age']; ?></th>
@@ -152,6 +156,9 @@ $patients = fetchAll("SELECT * FROM patients $whereClause ORDER BY created_at DE
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php foreach ($patients as $patient): ?>
                         <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 text-center">
+                                <input type="checkbox" class="row-checkbox" value="<?php echo $patient['id']; ?>" onchange="updateBulkButtons()" class="w-4 h-4 cursor-pointer">
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
                                 <?php echo $patient['patient_code']; ?>
                             </td>
@@ -208,14 +215,15 @@ async function deletePatient(id) {
         const data = await response.json();
         
         if (data.success) {
-            location.reload();
+            showToast('بیمار با موفقیت حذف شد', 'success');
+            setTimeout(() => location.reload(), 1000);
         } else {
             hideLoading();
-            alert(data.message);
+            showToast(data.message, 'error');
         }
     } catch (error) {
         hideLoading();
-        alert('خطایی رخ داده است');
+        showToast('خطایی رخ داده است', 'error');
     }
 }
 </script>

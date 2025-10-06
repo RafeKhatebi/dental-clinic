@@ -107,13 +107,13 @@ document.getElementById('partner-form').addEventListener('submit', async (e) => 
         const data = await response.json();
         
         if (data.success) {
-            alert('<?php echo $lang['update_success']; ?>');
-            window.location.href = 'index.php';
+            showToast('<?php echo $lang['update_success']; ?>', 'success');
+            setTimeout(() => window.location.href = 'index.php', 1000);
         } else {
-            alert(data.message);
+            showToast(data.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 });
 </script>

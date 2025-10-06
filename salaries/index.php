@@ -38,6 +38,9 @@ foreach ($staff as $member) {
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800"><?php echo $lang['salary_list']; ?></h1>
         <div class="flex gap-2">
+            <button onclick="exportToExcel('salariesTable', 'salaries')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                📊 Excel
+            </button>
             <input type="month" id="month-selector" value="<?php echo $selectedMonth; ?>" 
                 class="px-4 py-2 border border-gray-300 rounded-lg" 
                 onchange="window.location.href='?month='+this.value">
@@ -49,7 +52,7 @@ foreach ($staff as $member) {
             <div class="p-8 text-center text-gray-500"><?php echo $lang['no_data']; ?></div>
         <?php else: ?>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table id="salariesTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase"><?php echo $lang['full_name']; ?></th>
@@ -121,13 +124,13 @@ async function paySalary(staffId, monthYear, netSalary) {
 
         const data = await response.json();
         if (data.success) {
-            alert('<?php echo $lang['salary_paid']; ?>');
-            location.reload();
+            showToast('<?php echo $lang['salary_paid']; ?>', 'success');
+            setTimeout(() => location.reload(), 1000);
         } else {
-            alert(data.message);
+            showToast(data.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 }
 </script>

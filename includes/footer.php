@@ -134,6 +134,51 @@
             breadcrumb.appendChild(li);
         }
 
+        // Toast Notification
+        window.showToast = function(message, type = 'success', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✗',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            
+            toast.innerHTML = `
+                <div style="width: 24px; height: 24px; border-radius: 50%; background: ${colors[type]}; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">${icons[type]}</div>
+                <div style="flex: 1; color: #374151;">${message}</div>
+                <button onclick="this.parentElement.remove()" style="color: #9ca3af; hover:color: #374151;">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Check for success message in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            showToast(urlParams.get('success'), 'success');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (urlParams.get('error')) {
+            showToast(urlParams.get('error'), 'error');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
         // Autocomplete
         window.initAutocomplete = function(inputId, apiUrl, onSelect) {
             const input = document.getElementById(inputId);

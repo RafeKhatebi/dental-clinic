@@ -69,13 +69,13 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
 
         const result = await response.json();
         if (result.success) {
-            alert('<?php echo $lang['save_success']; ?>');
+            showToast('<?php echo $lang['save_success']; ?>', 'success');
             window.location.href = 'index.php';
         } else {
-            alert(result.message);
+            showToast(result.message, 'error');
         }
     } catch (error) {
-        alert('<?php echo $lang['error_occurred']; ?>');
+        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
     }
 });
 </script>

@@ -26,6 +26,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     </style>
     <?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/shortcuts.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/bulk-actions.js" defer></script>
     <style>
         .sidebar-link.active {
             background-color: #3B82F6;
@@ -101,6 +103,47 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             align-items: center;
         }
         .confirm-dialog.active { display: flex; }
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 16px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.warning { border-left: 4px solid #f59e0b; }
+        .toast.info { border-left: 4px solid #3b82f6; }
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+        .toast.hiding { animation: slideOut 0.3s ease-in; }
+        /* Print Styles */
+        @media print {
+            #sidebar, #mobile-menu-toggle, #show-sidebar, #user-menu-button, #user-menu, #breadcrumb, .no-print { display: none !important; }
+            body { background: white; }
+            main { padding: 0 !important; }
+            .bg-white { box-shadow: none !important; }
+            button, a[href]:not([href^="#"]) { display: none !important; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            thead { display: table-header-group; }
+            tfoot { display: table-footer-group; }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -215,6 +258,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         <a href="<?php echo BASE_URL; ?>/reports/index.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'index.php' && strpos($_SERVER['PHP_SELF'], '/reports/') !== false ? 'active' : ''; ?>">
                             سایر گزارشات
                         </a>
+                        <?php if (hasRole('admin')): ?>
+                        <a href="<?php echo BASE_URL; ?>/reports/activity_log.php" class="sidebar-link flex items-center px-12 py-2 hover:bg-gray-700 transition text-sm <?php echo basename($_SERVER['PHP_SELF']) === 'activity_log.php' ? 'active' : ''; ?>">
+                            گزارش فعالیتها
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -341,3 +389,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         </div>
                     </div>
                 </div>
+                
+                <!-- Toast Container -->
+                <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
