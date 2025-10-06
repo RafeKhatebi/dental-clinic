@@ -3,11 +3,18 @@ require_once '../config/config.php';
 include '../includes/header.php';
 
 // Get all services with pagination and filters
+$search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
 $status = $_GET['status'] ?? '';
 
 $whereClauses = [];
 $params = [];
+
+if (!empty($search)) {
+    $whereClauses[] = "(service_name LIKE ? OR service_name_en LIKE ?)";
+    $searchParam = "%$search%";
+    $params = array_merge($params, [$searchParam, $searchParam]);
+}
 
 if (!empty($category)) {
     $whereClauses[] = "category = ?";
@@ -58,6 +65,7 @@ $services = fetchAll("SELECT * FROM services $whereClause ORDER BY category, ser
     <div class="bg-white rounded-lg shadow-sm p-4">
         <form method="GET" class="space-y-4">
             <div class="flex gap-4">
+                <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="جستجو..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                 <button type="button" onclick="document.getElementById('advFilters').classList.toggle('hidden')" 
                     class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition" data-tooltip="فیلترها">
                     ⚙ فیلتر

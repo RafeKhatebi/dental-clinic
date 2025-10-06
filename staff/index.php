@@ -2,9 +2,19 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-$totalRecords = fetchOne("SELECT COUNT(*) as count FROM users WHERE is_staff = 1")['count'];
+$search = $_GET['search'] ?? '';
+$where = "is_staff = 1";
+$params = [];
+
+if (!empty($search)) {
+    $where .= " AND (full_name LIKE ? OR phone LIKE ? OR email LIKE ?)";
+    $searchParam = "%$search%";
+    $params = [$searchParam, $searchParam, $searchParam];
+}
+
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM users WHERE $where", $params)['count'];
 $pagination = getPagination($totalRecords, 20);
-$staff = fetchAll("SELECT * FROM users WHERE is_staff = 1 ORDER BY is_active DESC, full_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}");
+$staff = fetchAll("SELECT * FROM users WHERE $where ORDER BY is_active DESC, full_name LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}", $params);
 ?>
 
 <div class="space-y-6">
@@ -24,6 +34,16 @@ $staff = fetchAll("SELECT * FROM users WHERE is_staff = 1 ORDER BY is_active DES
                 + <?php echo $lang['add_staff']; ?>
             </a>
         </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <form method="GET" class="flex gap-4">
+            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="جستجو در نام، تلفن، ایمیل..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">جستجو</button>
+            <?php if (!empty($search)): ?>
+            <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">لغو</a>
+            <?php endif; ?>
+        </form>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">

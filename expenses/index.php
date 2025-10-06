@@ -2,9 +2,19 @@
 require_once '../config/config.php';
 include '../includes/header.php';
 
-$totalRecords = fetchOne("SELECT COUNT(*) as count FROM documents WHERE document_type = 'expense'")['count'];
+$search = $_GET['search'] ?? '';
+$where = "document_type = 'expense'";
+$params = [];
+
+if (!empty($search)) {
+    $where .= " AND (title LIKE ? OR expense_category LIKE ?)";
+    $searchParam = "%$search%";
+    $params = [$searchParam, $searchParam];
+}
+
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM documents WHERE $where", $params)['count'];
 $pagination = getPagination($totalRecords, 20);
-$expenses = fetchAll("SELECT * FROM documents WHERE document_type = 'expense' ORDER BY created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}");
+$expenses = fetchAll("SELECT * FROM documents WHERE $where ORDER BY created_at DESC LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}", $params);
 ?>
 
 <div class="space-y-6">
@@ -27,6 +37,16 @@ $expenses = fetchAll("SELECT * FROM documents WHERE document_type = 'expense' OR
                 + <?php echo $lang['add_expense']; ?>
             </a>
         </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <form method="GET" class="flex gap-4">
+            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="جستجو در عنوان یا دستهبندی..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">جستجو</button>
+            <?php if (!empty($search)): ?>
+            <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">لغو</a>
+            <?php endif; ?>
+        </form>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">

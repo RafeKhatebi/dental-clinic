@@ -3,11 +3,17 @@ require_once '../config/config.php';
 include '../includes/header.php';
 
 // Get all suppliers with pagination
-$totalRecords = fetchOne("
-    SELECT COUNT(DISTINCT supplier_name) as count
-    FROM medicines 
-    WHERE supplier_name IS NOT NULL AND supplier_name != ''
-")['count'];
+$search = $_GET['search'] ?? '';
+$where = "supplier_name IS NOT NULL AND supplier_name != ''";
+$params = [];
+
+if (!empty($search)) {
+    $where .= " AND (supplier_name LIKE ? OR supplier_phone LIKE ?)";
+    $searchParam = "%$search%";
+    $params = [$searchParam, $searchParam];
+}
+
+$totalRecords = fetchOne("SELECT COUNT(DISTINCT supplier_name) as count FROM medicines WHERE $where", $params)['count'];
 $pagination = getPagination($totalRecords, 20);
 $suppliers = fetchAll("
     SELECT DISTINCT 
@@ -17,11 +23,11 @@ $suppliers = fetchAll("
         supplier_address as address,
         MIN(id) as id
     FROM medicines 
-    WHERE supplier_name IS NOT NULL AND supplier_name != ''
+    WHERE $where
     GROUP BY supplier_name, supplier_phone, supplier_email, supplier_address
     ORDER BY supplier_name
     LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}
-");
+", $params);
 ?>
 
 <div class="space-y-6">
@@ -36,6 +42,17 @@ $suppliers = fetchAll("
                 + <?php echo $lang['add_supplier']; ?>
             </a>
         </div>
+    </div>
+
+    <!-- Search -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <form method="GET" class="flex gap-4">
+            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="جستجو در نام یا تلفن..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">جستجو</button>
+            <?php if (!empty($search)): ?>
+            <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">لغو</a>
+            <?php endif; ?>
+        </form>
     </div>
 
     <!-- Suppliers Table -->

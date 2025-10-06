@@ -3,7 +3,17 @@ require_once '../config/config.php';
 include '../includes/header.php';
 
 // Get all partners with pagination
-$totalRecords = fetchOne("SELECT COUNT(*) as count FROM documents WHERE document_type = 'partner_share'")['count'];
+$search = $_GET['search'] ?? '';
+$where = "document_type = 'partner_share'";
+$params = [];
+
+if (!empty($search)) {
+    $where .= " AND (partner_name LIKE ? OR partner_phone LIKE ?)";
+    $searchParam = "%$search%";
+    $params = [$searchParam, $searchParam];
+}
+
+$totalRecords = fetchOne("SELECT COUNT(*) as count FROM documents WHERE $where", $params)['count'];
 $pagination = getPagination($totalRecords, 20);
 $partners = fetchAll("
     SELECT 
@@ -17,10 +27,10 @@ $partners = fetchAll("
         period_end as end_date,
         CASE WHEN status = 'active' THEN 1 ELSE 0 END as is_active
     FROM documents 
-    WHERE document_type = 'partner_share'
+    WHERE $where
     ORDER BY status DESC, partner_name
     LIMIT {$pagination['perPage']} OFFSET {$pagination['offset']}
-");
+", $params);
 ?>
 
 <div class="space-y-6">
@@ -41,6 +51,17 @@ $partners = fetchAll("
                 + <?php echo $lang['add_partner']; ?>
             </a>
         </div>
+    </div>
+
+    <!-- Search -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <form method="GET" class="flex gap-4">
+            <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="جستجو در نام یا تلفن..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">جستجو</button>
+            <?php if (!empty($search)): ?>
+            <a href="index.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">لغو</a>
+            <?php endif; ?>
+        </form>
     </div>
 
     <!-- Partners Table -->

@@ -27,7 +27,7 @@ if ($lowStock === '1') {
 }
 
 if ($expiring === '1') {
-    $whereClauses[] = "expiry_date IS NOT NULL AND DATE(expiry_date) <= DATE('now', '+30 days')";
+    $whereClauses[] = "expiry_date IS NOT NULL AND expiry_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) AND expiry_date >= CURDATE()";
 }
 
 $whereClause = !empty($whereClauses) ? 'WHERE ' . implode(' AND ', $whereClauses) : '';

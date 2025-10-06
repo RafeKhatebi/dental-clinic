@@ -31,7 +31,9 @@ try {
     }
     
     // داروهای در حال انقضا
-    $expiring = fetchOne("SELECT COUNT(*) as count FROM medicines WHERE expiry_date <= ? AND expiry_date >= ? AND is_active = 1", [date('Y-m-d', strtotime('+30 days')), date('Y-m-d')])['count'];
+    $expiringDate = date('Y-m-d', strtotime('+30 days'));
+    $today = date('Y-m-d');
+    $expiring = fetchOne("SELECT COUNT(*) as count FROM medicines WHERE expiry_date <= ? AND expiry_date >= ? AND is_active = 1", [$expiringDate, $today])['count'];
     if ($expiring > 0) {
         $notifications[] = [
             'type' => 'warning',
