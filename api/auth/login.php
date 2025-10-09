@@ -14,6 +14,12 @@ if (empty($username) || empty($password)) {
     errorResponse(__('required_fields'));
 }
 
+// Check login attempts
+$loginCheck = checkLoginAttempts($username);
+if (!$loginCheck['allowed']) {
+    errorResponse($loginCheck['message'], 429);
+}
+
 try {
     $user = fetchOne(
         "SELECT * FROM users WHERE username = ? AND is_active = 1",
@@ -26,8 +32,12 @@ try {
 
     // Verify password
     if (!verifyPassword($password, $user['password'])) {
+        recordFailedLogin($username);
         errorResponse(__('login_failed'));
     }
+    
+    // Reset login attempts on success
+    resetLoginAttempts($username);
 
     // Set session variables
     $_SESSION['user_id'] = $user['id'];

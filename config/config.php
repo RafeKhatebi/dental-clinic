@@ -16,6 +16,9 @@ define('BASE_URL', '/Teeth/teeth');
 // Include database configuration
 require_once __DIR__ . '/database.php';
 
+// Include security helpers
+require_once BASE_PATH . '/includes/security.php';
+
 // Timezone
 date_default_timezone_set('Asia/Tehran');
 
@@ -334,3 +337,9 @@ function errorResponse($message, $statusCode = 400) {
 
 // Initialize database on first load
 initializeDatabase();
+
+// Check IP blocking
+if (isIPBlocked()) {
+    http_response_code(403);
+    die('Access Denied');
+}

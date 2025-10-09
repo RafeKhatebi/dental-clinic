@@ -12,6 +12,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php echo csrfMeta(); ?>
     <title><?php echo $lang['app_name']; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,6 +28,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/mobile.css">
+    <script src="<?php echo BASE_URL; ?>/assets/js/csrf.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/shortcuts.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/bulk-actions.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/validation.js" defer></script>
