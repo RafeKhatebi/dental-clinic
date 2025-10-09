@@ -107,6 +107,29 @@ function hasRole($role) {
 }
 
 /**
+ * Check permission for module
+ */
+function hasPermission($module) {
+    if (!isLoggedIn()) {
+        return false;
+    }
+    
+    // Admin always has full access
+    if ($_SESSION['role'] === 'admin') {
+        return true;
+    }
+    
+    // Load permissions from database
+    static $permissions = null;
+    if ($permissions === null) {
+        $permsData = fetchOne("SELECT data FROM system WHERE record_type = 'permission' AND setting_key = ?", [$_SESSION['role']]);
+        $permissions = $permsData ? json_decode($permsData['data'], true) : [];
+    }
+    
+    return in_array($module, $permissions);
+}
+
+/**
  * Redirect
  */
 function redirect($url) {
