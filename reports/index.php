@@ -241,6 +241,24 @@ $expiringSoon = fetchAll("SELECT * FROM medicines WHERE is_active = 1 AND expiry
                 <a href="../medicines/stock.php" class="block w-full text-center bg-purple-600 text-white px-3 py-2 rounded hover:bg-purple-700 text-sm">مشاهده گزارش</a>
             </div>
 
+            <!-- تحلیل پیشرفته -->
+            <div class="border rounded-lg p-4 bg-gradient-to-br from-purple-50 to-blue-50">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">📊</span>
+                    <h3 class="font-bold text-purple-700">تحلیل پیشرفته</h3>
+                </div>
+                <a href="advanced_analytics.php" class="block w-full text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-2 rounded hover:from-purple-700 hover:to-blue-700 text-sm font-semibold">مشاهده تحلیلها</a>
+            </div>
+
+            <!-- گزارش مقایسهای -->
+            <div class="border rounded-lg p-4 bg-gradient-to-br from-green-50 to-teal-50">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">📈</span>
+                    <h3 class="font-bold text-green-700">مقایسه دورهها</h3>
+                </div>
+                <a href="comparison_report.php" class="block w-full text-center bg-gradient-to-r from-green-600 to-teal-600 text-white px-3 py-2 rounded hover:from-green-700 hover:to-teal-700 text-sm font-semibold">مقایسه کن</a>
+            </div>
+
         </div>
     </div>
 

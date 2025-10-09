@@ -1,5 +1,6 @@
 <?php
 require_once '../../config/config.php';
+require_once '../../includes/backup_manager.php';
 
 header('Content-Type: application/json');
 
@@ -86,8 +87,15 @@ try {
 
     // Log activity
     logActivity('create', 'documents', $backupId, "Created database backup: $backupName");
+    
+    // پاکسازی بکاپهای قدیمی (نگهداری آخرین 5 بکاپ)
+    $cleanup = cleanOldBackups(5);
 
-    successResponse(__('backup_success'), ['id' => $backupId, 'name' => $backupName]);
+    successResponse(__('backup_success'), [
+        'id' => $backupId, 
+        'name' => $backupName,
+        'cleanup' => $cleanup
+    ]);
 
 } catch (Exception $e) {
     errorResponse(__('error_occurred') . ': ' . $e->getMessage());
