@@ -25,5 +25,6 @@ try {
     
     echo json_encode($patients);
 } catch (Exception $e) {
+    error_log('Patient search error: ' . $e->getMessage());
     echo json_encode([]);
 }
