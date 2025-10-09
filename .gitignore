@@ -1,0 +1,38 @@
+# Database
+database/*.sql
+!database/db.sql
+
+# Backups
+backups/*
+!backups/.gitkeep
+
+# Config
+config/database.php
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# PHP
+vendor/
+composer.lock
+
+# Cache
+cache/
+*.cache
