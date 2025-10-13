@@ -85,9 +85,9 @@ function getCurrentUser() {
     
     return [
         'id' => $_SESSION['user_id'],
-        'username' => $_SESSION['username'],
-        'full_name' => $_SESSION['full_name'],
-        'role' => $_SESSION['role']
+        'username' => $_SESSION['username'] ?? '',
+        'full_name' => $_SESSION['full_name'] ?? '',
+        'role' => $_SESSION['role'] ?? ''
     ];
 }
 
