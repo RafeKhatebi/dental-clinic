@@ -9,13 +9,13 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $current_lang; ?>" dir="<?php echo $current_lang === 'fa' ? 'rtl' : 'ltr'; ?>">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php echo csrfMeta(); ?>
     <title><?php echo $lang['app_name']; ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/tailwind.js"></script>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/head.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <?php if ($current_lang === 'fa'): ?>
         <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
@@ -39,210 +39,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <script src="<?php echo BASE_URL; ?>/assets/js/validation.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/mobile.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/libs/chartjs/chart.js"></script>
-
-    <style>
-        .sidebar-link.active {
-            background-color: #3B82F6;
-            color: white;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3B82F6;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Tooltip */
-        [data-tooltip] {
-            position: relative;
-            cursor: help;
-        }
-
-        [data-tooltip]:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 12px;
-            background: #1f2937;
-            color: white;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-            margin-bottom: 5px;
-        }
-
-        [data-tooltip]:hover::before {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #1f2937;
-            z-index: 1000;
-        }
-
-        /* Confirm Dialog */
-        .confirm-dialog {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9998;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .confirm-dialog.active {
-            display: flex;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            min-width: 300px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 16px;
-            z-index: 10000;
-            animation: slideIn 0.3s ease-out;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast.warning {
-            border-left: 4px solid #f59e0b;
-        }
-
-        .toast.info {
-            border-left: 4px solid #3b82f6;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-
-        .toast.hiding {
-            animation: slideOut 0.3s ease-in;
-        }
-
-        /* Print Styles */
-        @media print {
-
-            #sidebar,
-            #mobile-menu-toggle,
-            #show-sidebar,
-            #user-menu-button,
-            #user-menu,
-            #breadcrumb,
-            .no-print {
-                display: none !important;
-            }
-
-            body {
-                background: white;
-            }
-
-            main {
-                padding: 0 !important;
-            }
-
-            .bg-white {
-                box-shadow: none !important;
-            }
-
-            button,
-            a[href]:not([href^="#"]) {
-                display: none !important;
-            }
-
-            table {
-                page-break-inside: auto;
-            }
-
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
-
-            thead {
-                display: table-header-group;
-            }
-
-            tfoot {
-                display: table-footer-group;
-            }
-        }
-    </style>
 </head>
 
 <body class="bg-gray-100">
@@ -408,15 +204,15 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </a>
 
                     <?php /* Settings moved to user menu in header
-         <a href="<?php echo BASE_URL; ?>/settings/index.php" 
-            class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/settings/') !== false ? 'active' : ''; ?>">
-             <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-             </svg>
-             <?php echo $lang['menu_settings']; ?>
-         </a>
-         */ ?>
+     <a href="<?php echo BASE_URL; ?>/settings/index.php" 
+        class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/settings/') !== false ? 'active' : ''; ?>">
+         <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+         </svg>
+         <?php echo $lang['menu_settings']; ?>
+     </a>
+     */ ?>
 
                     <a href="<?php echo BASE_URL; ?>/backup/index.php"
                         class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/backup/') !== false ? 'active' : ''; ?>">
