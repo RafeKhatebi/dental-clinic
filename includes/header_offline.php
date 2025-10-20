@@ -1,0 +1,241 @@
+<?php
+if (!isLoggedIn()) {
+    redirect('/index.php');
+}
+
+$lang = loadLanguage();
+$user = getCurrentUser();
+$current_page = basename($_SERVER['PHP_SELF'], '.php');
+?>
+<!DOCTYPE html>
+<html lang="<?php echo $current_lang; ?>" dir="<?php echo $current_lang === 'fa' ? 'rtl' : 'ltr'; ?>">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php echo csrfMeta(); ?>
+    <title><?php echo $lang['app_name']; ?></title>
+    
+    <!-- ✅ OFFLINE MODE - همه فایلها محلی هستند -->
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/tailwind.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/fonts.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/mobile.css">
+    
+    <script src="<?php echo BASE_URL; ?>/assets/libs/chartjs/chart.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/csrf.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/shortcuts.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/bulk-actions.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/validation.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/mobile.js" defer></script>
+    
+    <style>
+        .sidebar-link.active {
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3B82F6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: #1f2937;
+            color: white;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 5px;
+        }
+
+        [data-tooltip]:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            z-index: 1000;
+        }
+
+        /* Confirm Dialog */
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirm-dialog.active {
+            display: flex;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast.hiding {
+            animation: slideOut 0.3s ease-in;
+        }
+
+        /* Print Styles */
+        @media print {
+
+            #sidebar,
+            #mobile-menu-toggle,
+            #show-sidebar,
+            #user-menu-button,
+            #user-menu,
+            #breadcrumb,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            main {
+                padding: 0 !important;
+            }
+
+            .bg-white {
+                box-shadow: none !important;
+            }
+
+            button,
+            a[href]:not([href^="#"]) {
+                display: none !important;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tfoot {
+                display: table-footer-group;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <!-- بقیه کد header مثل قبل... -->
+    <?php 
+    // Include the rest of header content from original header.php
+    // از خط 35 به بعد header.php اصلی را کپی کنید
+    ?>

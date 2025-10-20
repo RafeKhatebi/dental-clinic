@@ -32,15 +32,14 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             }
         </style>
     <?php endif; ?>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- offline link -->
-    <!-- <script src="../assets/libs/chartjs/chart.js"></script> -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/mobile.css">
     <script src="<?php echo BASE_URL; ?>/assets/js/csrf.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/shortcuts.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/bulk-actions.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/validation.js" defer></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/mobile.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/libs/chartjs/chart.js"></script>
+
     <style>
         .sidebar-link.active {
             background-color: #3B82F6;
@@ -409,15 +408,15 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </a>
 
                     <?php /* Settings moved to user menu in header
-             <a href="<?php echo BASE_URL; ?>/settings/index.php" 
-                class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/settings/') !== false ? 'active' : ''; ?>">
-                 <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                 </svg>
-                 <?php echo $lang['menu_settings']; ?>
-             </a>
-             */ ?>
+         <a href="<?php echo BASE_URL; ?>/settings/index.php" 
+            class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/settings/') !== false ? 'active' : ''; ?>">
+             <svg class="w-5 h-5 <?php echo $current_lang === 'fa' ? 'ml-3' : 'mr-3'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+             </svg>
+             <?php echo $lang['menu_settings']; ?>
+         </a>
+         */ ?>
 
                     <a href="<?php echo BASE_URL; ?>/backup/index.php"
                         class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-800 transition <?php echo strpos($_SERVER['PHP_SELF'], '/backup/') !== false ? 'active' : ''; ?>">

@@ -1,5 +1,5 @@
 /*!
- * Chart.js v4.5.0
+ * Chart.js v4.5.1
  * https://www.chartjs.org
  * (c) 2025 Chart.js Contributors
  * Released under the MIT License
@@ -1456,9 +1456,9 @@
   }
   function ke(t, e, i) {
     const s = e || 1,
-      n = Math.floor(t.height * s),
-      o = Math.floor(t.width * s);
-    (t.height = Math.floor(t.height)), (t.width = Math.floor(t.width));
+      n = Me(t.height * s),
+      o = Me(t.width * s);
+    (t.height = Me(t.height)), (t.width = Me(t.width));
     const a = t.canvas;
     return (
       a.style &&
@@ -5463,18 +5463,23 @@
   var nn = new sn();
   class on {
     constructor() {
-      this._init = [];
+      this._init = void 0;
     }
     notify(t, e, i, s) {
-      "beforeInit" === e &&
-        ((this._init = this._createDescriptors(t, !0)),
-        this._notify(this._init, t, "install"));
+      if (
+        ("beforeInit" === e &&
+          ((this._init = this._createDescriptors(t, !0)),
+          this._notify(this._init, t, "install")),
+        void 0 === this._init)
+      )
+        return;
       const n = s ? this._descriptors(t).filter(s) : this._descriptors(t),
         o = this._notify(n, t, e, i);
       return (
         "afterDestroy" === e &&
           (this._notify(n, t, "stop"),
-          this._notify(this._init, t, "uninstall")),
+          this._notify(this._init, t, "uninstall"),
+          (this._init = void 0)),
         o
       );
     }
@@ -5844,7 +5849,7 @@
     static instances = Cn;
     static overrides = re;
     static registry = nn;
-    static version = "4.5.0";
+    static version = "4.5.1";
     static getChart = On;
     static register(...t) {
       nn.add(...t), Ln();
@@ -6719,26 +6724,36 @@
         legend: {
           labels: {
             generateLabels(t) {
-              const e = t.data;
-              if (e.labels.length && e.datasets.length) {
-                const {
-                  labels: { pointStyle: i, color: s },
-                } = t.legend.options;
-                return e.labels.map((e, n) => {
-                  const o = t.getDatasetMeta(0).controller.getStyle(n);
-                  return {
-                    text: e,
-                    fillStyle: o.backgroundColor,
-                    strokeStyle: o.borderColor,
-                    fontColor: s,
-                    lineWidth: o.borderWidth,
+              const e = t.data,
+                {
+                  labels: {
                     pointStyle: i,
-                    hidden: !t.getDataVisibility(n),
-                    index: n,
-                  };
-                });
-              }
-              return [];
+                    textAlign: s,
+                    color: n,
+                    useBorderRadius: o,
+                    borderRadius: a,
+                  },
+                } = t.legend.options;
+              return e.labels.length && e.datasets.length
+                ? e.labels.map((e, r) => {
+                    const l = t.getDatasetMeta(0).controller.getStyle(r);
+                    return {
+                      text: e,
+                      fillStyle: l.backgroundColor,
+                      fontColor: n,
+                      hidden: !t.getDataVisibility(r),
+                      lineDash: l.borderDash,
+                      lineDashOffset: l.borderDashOffset,
+                      lineJoin: l.borderJoinStyle,
+                      lineWidth: l.borderWidth,
+                      strokeStyle: l.borderColor,
+                      textAlign: s,
+                      pointStyle: i,
+                      borderRadius: o && (a || l.borderRadius),
+                      index: r,
+                    };
+                  })
+                : [];
             },
           },
           onClick(t, e, i) {
