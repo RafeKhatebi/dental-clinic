@@ -35,7 +35,7 @@ try {
         recordFailedLogin($username);
         errorResponse(__('login_failed'));
     }
-    
+
     // Reset login attempts on success
     resetLoginAttempts($username);
 
