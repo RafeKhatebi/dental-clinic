@@ -41,7 +41,7 @@ return [
     'total' => 'Total',
     'description' => 'Description',
     'notes' => 'Notes',
-    
+
     // Menu
     'menu_dashboard' => 'Dashboard',
     'menu_patients' => 'Patients',
@@ -53,7 +53,7 @@ return [
     'menu_settings' => 'Settings',
     'menu_users' => 'Users',
     'menu_backup' => 'Backup',
-    
+
     // Dashboard
     'today_patients' => 'Today\'s Patients',
     'today_revenue' => 'Today\'s Revenue',
@@ -65,7 +65,7 @@ return [
     'expiring_medicines' => 'Expiring Medicines',
     'partner_shares' => 'Partner Shares',
     'revenue_chart' => 'Revenue Chart',
-    
+
     // Patients
     'patients' => 'Patients',
     'patient_list' => 'Patient List',
@@ -88,7 +88,7 @@ return [
     'patient_services' => 'Services Provided',
     'patient_payments' => 'Payments',
     'patient_debts' => 'Debts',
-    
+
     // Services
     'services' => 'Services',
     'service_list' => 'Service List',
@@ -106,7 +106,7 @@ return [
     'total_price' => 'Total Price',
     'discount' => 'Discount',
     'final_price' => 'Final Price',
-    
+
     // Service Categories
     'restorative' => 'Restorative',
     'surgery' => 'Surgery',
@@ -114,7 +114,7 @@ return [
     'preventive' => 'Preventive',
     'orthodontics' => 'Orthodontics',
     'cosmetic' => 'Cosmetic',
-    
+
     // Payments
     'payments' => 'Payments',
     'payment_list' => 'Payment List',
@@ -132,7 +132,7 @@ return [
     'paid_amount' => 'Paid Amount',
     'remaining_amount' => 'Remaining Amount',
     'overdue' => 'Overdue',
-    
+
     // Medicines
     'medicines' => 'Medicines',
     'medicine_list' => 'Medicine List',
@@ -154,7 +154,7 @@ return [
     'customer_name' => 'Customer Name',
     'sale_date' => 'Sale Date',
     'sale_items' => 'Sale Items',
-    
+
     // Suppliers
     'suppliers' => 'Suppliers',
     'supplier_list' => 'Supplier List',
@@ -173,7 +173,7 @@ return [
     'pending' => 'Pending',
     'partial' => 'Partial',
     'paid' => 'Paid',
-    
+
     // Partners
     'partners' => 'Partners',
     'partner_list' => 'Partner List',
@@ -190,7 +190,7 @@ return [
     'medicine_revenue' => 'Medicine Revenue',
     'total_revenue' => 'Total Revenue',
     'share_amount' => 'Share Amount',
-    
+
     // Reports
     'reports' => 'Reports',
     'daily_report' => 'Daily Report',
@@ -233,7 +233,7 @@ return [
     'other_reports' => 'Other Reports',
     'all' => 'All',
     'trend_charts' => 'Trend Charts',
-    
+
     // Prescriptions
     'prescriptions' => 'Prescriptions',
     'prescription_list' => 'Prescription List',
@@ -246,7 +246,7 @@ return [
     'duration' => 'Duration',
     'instructions' => 'Instructions',
     'print_prescription' => 'Print Prescription',
-    
+
     // Users
     'users' => 'Users',
     'user_list' => 'User List',
@@ -257,7 +257,7 @@ return [
     'dentist' => 'Dentist',
     'secretary' => 'Secretary',
     'accountant' => 'Accountant',
-    
+
     // Settings
     'settings' => 'Settings',
     'general_settings' => 'General Settings',
@@ -271,7 +271,7 @@ return [
     'date_format' => 'Date Format',
     'low_stock_alert' => 'Low Stock Alert',
     'expiry_alert_days' => 'Expiry Alert Days',
-    
+
     // Backup
     'backup' => 'Backup',
     'backup_list' => 'Backup List',
@@ -280,7 +280,7 @@ return [
     'backup_name' => 'Backup Name',
     'backup_size' => 'Size',
     'download' => 'Download',
-    
+
     // Messages
     'login_success' => 'Login successful',
     'login_failed' => 'Invalid username or password',
@@ -295,7 +295,7 @@ return [
     'invalid_email' => 'Invalid email address',
     'backup_success' => 'Backup created successfully',
     'restore_success' => 'Backup restored successfully',
-    
+
     // Staff & Expenses
     'menu_staff' => 'Staff',
     'menu_expenses' => 'Expenses',

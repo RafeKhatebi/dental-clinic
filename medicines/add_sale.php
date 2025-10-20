@@ -31,9 +31,10 @@ $patients = fetchAll("SELECT id, patient_code, first_name, last_name FROM patien
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                         <option value="">-- <?php echo $lang['patient_code']; ?> --</option>
                         <?php foreach ($patients as $patient): ?>
-                        <option value="<?php echo $patient['id']; ?>">
-                            <?php echo $patient['patient_code']; ?> - <?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']); ?>
-                        </option>
+                            <option value="<?php echo $patient['id']; ?>">
+                                <?php echo $patient['patient_code']; ?> -
+                                <?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']); ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -74,7 +75,8 @@ $patients = fetchAll("SELECT id, patient_code, first_name, last_name FROM patien
             <div>
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-800"><?php echo $lang['sale_items']; ?></h3>
-                    <button type="button" onclick="addSaleItem()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                    <button type="button" onclick="addSaleItem()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition text-sm">
                         + <?php echo $lang['add']; ?>
                     </button>
                 </div>
@@ -120,12 +122,10 @@ $patients = fetchAll("SELECT id, patient_code, first_name, last_name FROM patien
 
             <!-- Submit Buttons -->
             <div class="flex gap-4">
-                <button type="submit" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
                     <?php echo $lang['save']; ?>
                 </button>
-                <a href="sales.php" 
-                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
+                <a href="sales.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">
                     <?php echo $lang['cancel']; ?>
                 </a>
             </div>
@@ -134,17 +134,17 @@ $patients = fetchAll("SELECT id, patient_code, first_name, last_name FROM patien
 </div>
 
 <script>
-const medicines = <?php echo json_encode($medicines); ?>;
-let itemCounter = 0;
+    const medicines = <?php echo json_encode($medicines); ?>;
+    let itemCounter = 0;
 
-// Add initial item
-addSaleItem();
+    // Add initial item
+    addSaleItem();
 
-function addSaleItem() {
-    const container = document.getElementById('sale-items');
-    const itemId = itemCounter++;
-    
-    const itemHtml = `
+    function addSaleItem() {
+        const container = document.getElementById('sale-items');
+        const itemId = itemCounter++;
+
+        const itemHtml = `
         <div class="sale-item grid grid-cols-12 gap-2 p-3 bg-white border border-gray-200 rounded-lg" data-item-id="${itemId}">
             <div class="col-span-5">
                 <select name="items[${itemId}][medicine_id]" class="medicine-select w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required onchange="updateItemPrice(${itemId})">
@@ -170,91 +170,91 @@ function addSaleItem() {
             </div>
         </div>
     `;
-    
-    container.insertAdjacentHTML('beforeend', itemHtml);
-}
 
-function removeSaleItem(itemId) {
-    const item = document.querySelector(`[data-item-id="${itemId}"]`);
-    if (item) {
-        item.remove();
+        container.insertAdjacentHTML('beforeend', itemHtml);
+    }
+
+    function removeSaleItem(itemId) {
+        const item = document.querySelector(`[data-item-id="${itemId}"]`);
+        if (item) {
+            item.remove();
+            calculateTotals();
+        }
+    }
+
+    function updateItemPrice(itemId) {
+        const item = document.querySelector(`[data-item-id="${itemId}"]`);
+        const select = item.querySelector('.medicine-select');
+        const quantityInput = item.querySelector('.quantity-input');
+        const priceInput = item.querySelector('.price-input');
+        const totalInput = item.querySelector('.total-input');
+
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        const stock = parseInt(selectedOption.getAttribute('data-stock') || 0);
+        const quantity = parseInt(quantityInput.value) || 0;
+
+        if (price && !priceInput.value) {
+            priceInput.value = price;
+        }
+
+        if (quantity > stock) {
+            showToast('<?php echo $lang['stock_quantity']; ?>: ' + stock, 'warning');
+            quantityInput.value = stock;
+        }
+
+        const unitPrice = parseFloat(priceInput.value) || 0;
+        const total = quantity * unitPrice;
+        totalInput.value = total;
+
         calculateTotals();
     }
-}
 
-function updateItemPrice(itemId) {
-    const item = document.querySelector(`[data-item-id="${itemId}"]`);
-    const select = item.querySelector('.medicine-select');
-    const quantityInput = item.querySelector('.quantity-input');
-    const priceInput = item.querySelector('.price-input');
-    const totalInput = item.querySelector('.total-input');
-    
-    const selectedOption = select.options[select.selectedIndex];
-    const price = selectedOption.getAttribute('data-price');
-    const stock = parseInt(selectedOption.getAttribute('data-stock') || 0);
-    const quantity = parseInt(quantityInput.value) || 0;
-    
-    if (price && !priceInput.value) {
-        priceInput.value = price;
-    }
-    
-    if (quantity > stock) {
-        showToast('<?php echo $lang['stock_quantity']; ?>: ' + stock, 'warning');
-        quantityInput.value = stock;
-    }
-    
-    const unitPrice = parseFloat(priceInput.value) || 0;
-    const total = quantity * unitPrice;
-    totalInput.value = total;
-    
-    calculateTotals();
-}
-
-function calculateTotals() {
-    let total = 0;
-    document.querySelectorAll('.total-input').forEach(input => {
-        total += parseFloat(input.value) || 0;
-    });
-    
-    const discount = parseFloat(document.getElementById('discount').value) || 0;
-    const finalAmount = total - discount;
-    
-    document.getElementById('total_amount').value = total;
-    document.getElementById('final_amount').value = finalAmount;
-}
-
-document.getElementById('discount').addEventListener('input', calculateTotals);
-
-// Form submission
-document.getElementById('sale-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    
-    // Validate at least one item
-    if (document.querySelectorAll('.sale-item').length === 0) {
-        showToast('<?php echo $lang['required_fields']; ?>', 'warning');
-        return;
-    }
-    
-    try {
-        const response = await fetch('<?php echo BASE_URL; ?>/api/medicines/create_sale.php', {
-            method: 'POST',
-            body: formData
+    function calculateTotals() {
+        let total = 0;
+        document.querySelectorAll('.total-input').forEach(input => {
+            total += parseFloat(input.value) || 0;
         });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('<?php echo $lang['save_success']; ?>', 'success');
-            setTimeout(() => window.location.href = 'sales.php', 1000);
-        } else {
-            showToast(data.message, 'error');
-        }
-    } catch (error) {
-        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
+
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        const finalAmount = total - discount;
+
+        document.getElementById('total_amount').value = total;
+        document.getElementById('final_amount').value = finalAmount;
     }
-});
+
+    document.getElementById('discount').addEventListener('input', calculateTotals);
+
+    // Form submission
+    document.getElementById('sale-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        // Validate at least one item
+        if (document.querySelectorAll('.sale-item').length === 0) {
+            showToast('<?php echo $lang['required_fields']; ?>', 'warning');
+            return;
+        }
+
+        try {
+            const response = await fetch('<?php echo BASE_URL; ?>/api/medicines/create_sale.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('<?php echo $lang['save_success']; ?>', 'success');
+                setTimeout(() => window.location.href = 'sales.php', 1000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            showToast('<?php echo $lang['error_occurred']; ?>', 'error');
+        }
+    });
 </script>
 
 <?php include '../includes/footer.php'; ?>

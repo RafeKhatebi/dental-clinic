@@ -25,13 +25,14 @@ include '../includes/header.php';
     <div class="bg-white rounded-lg shadow-sm p-6">
         <form id="medicine-form" class="space-y-6">
             <input type="hidden" name="id" value="<?php echo $medicine['id']; ?>">
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['medicine_name']; ?> (فارسی) *
                     </label>
-                    <input type="text" name="medicine_name" value="<?php echo htmlspecialchars($medicine['medicine_name']); ?>" required
+                    <input type="text" name="medicine_name"
+                        value="<?php echo htmlspecialchars($medicine['medicine_name']); ?>" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -39,7 +40,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['medicine_name']; ?> (English)
                     </label>
-                    <input type="text" name="medicine_name_en" value="<?php echo htmlspecialchars($medicine['medicine_name_en'] ?? ''); ?>"
+                    <input type="text" name="medicine_name_en"
+                        value="<?php echo htmlspecialchars($medicine['medicine_name_en'] ?? ''); ?>"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -47,7 +49,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['category']; ?>
                     </label>
-                    <input type="text" name="category" value="<?php echo htmlspecialchars($medicine['category'] ?? ''); ?>"
+                    <input type="text" name="category"
+                        value="<?php echo htmlspecialchars($medicine['category'] ?? ''); ?>"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -55,7 +58,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['manufacturer']; ?>
                     </label>
-                    <input type="text" name="manufacturer" value="<?php echo htmlspecialchars($medicine['manufacturer'] ?? ''); ?>"
+                    <input type="text" name="manufacturer"
+                        value="<?php echo htmlspecialchars($medicine['manufacturer'] ?? ''); ?>"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -66,12 +70,16 @@ include '../includes/header.php';
                     <select name="unit" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                         <option value="Box" <?php echo $medicine['unit'] === 'Box' ? 'selected' : ''; ?>>Box</option>
-                        <option value="Bottle" <?php echo $medicine['unit'] === 'Bottle' ? 'selected' : ''; ?>>Bottle</option>
-                        <option value="Tablet" <?php echo $medicine['unit'] === 'Tablet' ? 'selected' : ''; ?>>Tablet</option>
-                        <option value="Capsule" <?php echo $medicine['unit'] === 'Capsule' ? 'selected' : ''; ?>>Capsule</option>
+                        <option value="Bottle" <?php echo $medicine['unit'] === 'Bottle' ? 'selected' : ''; ?>>Bottle
+                        </option>
+                        <option value="Tablet" <?php echo $medicine['unit'] === 'Tablet' ? 'selected' : ''; ?>>Tablet
+                        </option>
+                        <option value="Capsule" <?php echo $medicine['unit'] === 'Capsule' ? 'selected' : ''; ?>>Capsule
+                        </option>
                         <option value="Vial" <?php echo $medicine['unit'] === 'Vial' ? 'selected' : ''; ?>>Vial</option>
                         <option value="Tube" <?php echo $medicine['unit'] === 'Tube' ? 'selected' : ''; ?>>Tube</option>
-                        <option value="Piece" <?php echo $medicine['unit'] === 'Piece' ? 'selected' : ''; ?>>Piece</option>
+                        <option value="Piece" <?php echo $medicine['unit'] === 'Piece' ? 'selected' : ''; ?>>Piece
+                        </option>
                     </select>
                 </div>
 
@@ -79,7 +87,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['purchase_price']; ?> *
                     </label>
-                    <input type="number" name="purchase_price" value="<?php echo $medicine['purchase_price']; ?>" min="0" step="1000" required
+                    <input type="number" name="purchase_price" value="<?php echo $medicine['purchase_price']; ?>"
+                        min="0" step="1000" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -87,7 +96,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['sale_price']; ?> *
                     </label>
-                    <input type="number" name="sale_price" value="<?php echo $medicine['sale_price']; ?>" min="0" step="1000" required
+                    <input type="number" name="sale_price" value="<?php echo $medicine['sale_price']; ?>" min="0"
+                        step="1000" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -95,7 +105,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['stock_quantity']; ?>
                     </label>
-                    <input type="number" name="stock_quantity" value="<?php echo $medicine['stock_quantity']; ?>" min="0" required
+                    <input type="number" name="stock_quantity" value="<?php echo $medicine['stock_quantity']; ?>"
+                        min="0" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -103,7 +114,8 @@ include '../includes/header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <?php echo $lang['min_stock_level']; ?>
                     </label>
-                    <input type="number" name="min_stock_level" value="<?php echo $medicine['min_stock_level']; ?>" min="0" required
+                    <input type="number" name="min_stock_level" value="<?php echo $medicine['min_stock_level']; ?>"
+                        min="0" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
                 </div>
 
@@ -137,29 +149,29 @@ include '../includes/header.php';
 </div>
 
 <script>
-document.getElementById('medicine-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    
-    try {
-        const response = await fetch('<?php echo BASE_URL; ?>/api/medicines/update.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('<?php echo $lang['update_success']; ?>', 'success');
-            setTimeout(() => window.location.href = 'index.php', 1000);
-        } else {
-            showToast(data.message, 'error');
+    document.getElementById('medicine-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        try {
+            const response = await fetch('<?php echo BASE_URL; ?>/api/medicines/update.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('<?php echo $lang['update_success']; ?>', 'success');
+                setTimeout(() => window.location.href = 'index.php', 1000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            showToast('<?php echo $lang['error_occurred']; ?>', 'error');
         }
-    } catch (error) {
-        showToast('<?php echo $lang['error_occurred']; ?>', 'error');
-    }
-});
+    });
 </script>
 
 <?php include '../includes/footer.php'; ?>

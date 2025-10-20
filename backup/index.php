@@ -35,16 +35,20 @@ $backups = fetchAll("SELECT d.*, u.full_name as created_by_name FROM documents d
                         <tr>
                             <th
                                 class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase">
-                                <?php echo $lang['backup_name']; ?></th>
+                                <?php echo $lang['backup_name']; ?>
+                            </th>
                             <th
                                 class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase">
-                                <?php echo $lang['backup_size']; ?></th>
+                                <?php echo $lang['backup_size']; ?>
+                            </th>
                             <th
                                 class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase">
-                                <?php echo $lang['date']; ?></th>
+                                <?php echo $lang['date']; ?>
+                            </th>
                             <th
                                 class="px-6 py-3 text-<?php echo $current_lang === 'fa' ? 'right' : 'left'; ?> text-xs font-medium text-gray-500 uppercase">
-                                <?php echo $lang['actions']; ?></th>
+                                <?php echo $lang['actions']; ?>
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">

@@ -101,16 +101,17 @@ function fetchAll($query, $params = [], $useCache = false)
     if ($useCache) {
         $cacheKey = getCacheKey($query, $params);
         $cached = getCache($cacheKey);
-        if ($cached !== null) return $cached;
+        if ($cached !== null)
+            return $cached;
     }
-    
+
     $stmt = executeQuery($query, $params);
     $result = $stmt->fetchAll();
-    
+
     if ($useCache) {
         setCache($cacheKey, $result);
     }
-    
+
     return $result;
 }
 
@@ -122,16 +123,17 @@ function fetchOne($query, $params = [], $useCache = false)
     if ($useCache) {
         $cacheKey = getCacheKey($query, $params);
         $cached = getCache($cacheKey);
-        if ($cached !== null) return $cached;
+        if ($cached !== null)
+            return $cached;
     }
-    
+
     $stmt = executeQuery($query, $params);
     $result = $stmt->fetch();
-    
+
     if ($useCache) {
         setCache($cacheKey, $result);
     }
-    
+
     return $result;
 }
 
@@ -200,16 +202,19 @@ $GLOBALS['cache_ttl'] = 300; // 5 minutes
 /**
  * Get Cache Key
  */
-function getCacheKey($query, $params = []) {
+function getCacheKey($query, $params = [])
+{
     return md5($query . serialize($params));
 }
 
 /**
  * Get from Cache
  */
-function getCache($key) {
-    if (!$GLOBALS['cache_enabled']) return null;
-    
+function getCache($key)
+{
+    if (!$GLOBALS['cache_enabled'])
+        return null;
+
     if (isset($GLOBALS['query_cache'][$key])) {
         $cache = $GLOBALS['query_cache'][$key];
         if (time() - $cache['time'] < $GLOBALS['cache_ttl']) {
@@ -223,9 +228,11 @@ function getCache($key) {
 /**
  * Set Cache
  */
-function setCache($key, $data) {
-    if (!$GLOBALS['cache_enabled']) return;
-    
+function setCache($key, $data)
+{
+    if (!$GLOBALS['cache_enabled'])
+        return;
+
     $GLOBALS['query_cache'][$key] = [
         'data' => $data,
         'time' => time()
@@ -235,7 +242,8 @@ function setCache($key, $data) {
 /**
  * Clear Cache
  */
-function clearCache($pattern = null) {
+function clearCache($pattern = null)
+{
     if ($pattern === null) {
         $GLOBALS['query_cache'] = [];
     } else {
